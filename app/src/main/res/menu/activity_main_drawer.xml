@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/mon_gov"
+            android:icon="@drawable/ic_lens_black_24dp"
+            android:title="@string/mon_gov" />
+        <item
+            android:id="@+id/metodkab"
+            android:icon="@drawable/ic_lens_black_24dp"
+            android:title="@string/metodkab" />
+        <item
+            android:id="@+id/school_koritnanska"
+            android:icon="@drawable/ic_lens_black_24dp"
+            android:title="@string/school_koritnanska" />
+        <item
+            android:id="@+id/school_shishlivtsi"
+            android:icon="@drawable/ic_lens_black_24dp"
+            android:title="@string/school_shishlivtsi" />
+        <item
+            android:id="@+id/school_kontsivska"
+            android:icon="@drawable/ic_lens_black_24dp"
+            android:title="@string/school_kontsivska" />
+        <item
+            android:id="@+id/school_onokivska"
+            android:icon="@drawable/ic_lens_black_24dp"
+            android:title="@string/school_onokivska" />
+        <item
+            android:id="@+id/school_surtivska"
+            android:icon="@drawable/ic_lens_black_24dp"
+            android:title="@string/school_surtivska" />
+        <item
+            android:id="@+id/school_esenska"
+            android:icon="@drawable/ic_lens_black_24dp"
+            android:title="@string/school_esenska" />
+        <item
+            android:id="@+id/school_malodobronska"
+            android:icon="@drawable/ic_lens_black_24dp"
+            android:title="@string/school_malodobronska" />
+        <item
+            android:id="@+id/school_velikolazivska"
+            android:icon="@drawable/ic_lens_black_24dp"
+            android:title="@string/school_velikolazivska" />
+        <item
+            android:id="@+id/school_storozhnitska"
+            android:icon="@drawable/ic_lens_black_24dp"
+            android:title="@string/school_storozhnitska" />
+        <item
+            android:id="@+id/licey_velikodobronska"
+            android:icon="@drawable/ic_lens_black_24dp"
+            android:title="@string/licey_velikodobronska" />
+        <item
+            android:id="@+id/school_kamyanitska"
+            android:icon="@drawable/ic_lens_black_24dp"
+            android:title="@string/school_kamyanitska" />
+        <item
+            android:id="@+id/school_ruskokomarivska"
+            android:icon="@drawable/ic_lens_black_24dp"
+            android:title="@string/school_ruskokomarivska" />
+        <item
+            android:id="@+id/school_velikoheevtska"
+            android:icon="@drawable/ic_lens_black_24dp"
+            android:title="@string/school_velikoheevetska" />
+        <item
+            android:id="@+id/school_velikodobronska"
+            android:icon="@drawable/ic_lens_black_24dp"
+            android:title="@string/school_velikodobronska" />
+        <item
+            android:id="@+id/school_rativetska"
+            android:icon="@drawable/ic_lens_black_24dp"
+            android:title="@string/school_rativetska" />
+        <item
+            android:id="@+id/school_tisaashvanska"
+            android:icon="@drawable/ic_lens_black_24dp"
+            android:title="@string/school_tisaashvanska" />
+        <item
+            android:id="@+id/school_serednanska"
+            android:icon="@drawable/ic_lens_black_24dp"
+            android:title="@string/school_serednanska" />
+        <item
+            android:id="@+id/school_chernivskoi"
+            android:icon="@drawable/ic_lens_black_24dp"
+            android:title="@string/school_chernivskoi" />
+        <item
+            android:id="@+id/school_maloheevetska"
+            android:icon="@drawable/ic_lens_black_24dp"
+            android:title="@string/school_maloheevetska" />
+        <item
+            android:id="@+id/school_palad_komarivetska"
+            android:icon="@drawable/ic_lens_black_24dp"
+            android:title="@string/school_palad_komarivetska" />
+        <item
+            android:id="@+id/school_hudlivska"
+            android:icon="@drawable/ic_lens_black_24dp"
+            android:title="@string/school_hudlivska" />
+        <item
+            android:id="@+id/school_kiblarivska"
+            android:icon="@drawable/ic_lens_black_24dp"
+            android:title="@string/school_kiblarivska" />
+        <item
+            android:id="@+id/school_solokivska"
+            android:icon="@drawable/ic_lens_black_24dp"
+            android:title="@string/school_solovkivska" />
+        <item
+            android:id="@+id/school_kholmkivska"
+            android:icon="@drawable/ic_lens_black_24dp"
+            android:title="@string/school_kholmkivksa" />
+        <item
+            android:id="@+id/school_solomonivska"
+            android:icon="@drawable/ic_lens_black_24dp"
+            android:title="@string/school_solomonivska" />
+    </group>
+</menu>
