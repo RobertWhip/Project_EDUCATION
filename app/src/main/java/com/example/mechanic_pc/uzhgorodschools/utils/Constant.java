@@ -14,7 +14,8 @@ public class Constant {
 
     public static final String NEW_URL = "newUrl";
     public static final String URL = "url";
-    public static final String SCHOOL_NAME = "schoolName";
-    public static final int SECONDS_TO_SLEEP = 80 * SECOND;
-    public static final int SECONDS_TO_TIMEOUT = 12 * SECOND;
+    public static final String ID = "id";
+    public static final String NOTIFICATION_CLICKED = "notifClicked";
+    public static final int SECONDS_TO_SLEEP = 100 * SECOND;
+    public static final int SECONDS_TO_TIMEOUT = 10 * SECOND;
 }

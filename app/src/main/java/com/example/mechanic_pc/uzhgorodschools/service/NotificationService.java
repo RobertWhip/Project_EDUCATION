@@ -31,7 +31,6 @@ import org.jsoup.select.Elements;
 public class NotificationService extends Service {
 
     private static boolean serviceExist = true;
-    private static boolean dbFirst = true;
     private static int i = 0;
 
     private SQLiteDatabase db;
@@ -39,10 +38,12 @@ public class NotificationService extends Service {
 
     private Context context;
 
-    private String currentSchoolName="Error";
+    private String currentSchoolName = "Error";
     private String currentId = "0";
 
     private InternetConnection net;
+    private Handler handler;
+    private Runnable runb;
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -52,50 +53,50 @@ public class NotificationService extends Service {
             serviceExist = true;
 
         }
-        context = getApplicationContext();
-        net = new InternetConnection(context);
 
-        final Handler handler = new Handler();
+        if (context == null)
+            context = getApplicationContext();
+        if (net == null)
+            net = new InternetConnection(context);
 
-        final Runnable runb = new Runnable() {
-            public void run() {
+        handler = new Handler();
 
-                if(net.connectionAvailable()) {
-                    try {
-                        SQLiteOpenHelper shopDatabaseHelper = new SchoolDatabaseHelper(context);
-                        db = shopDatabaseHelper.getReadableDatabase();
+        if (runb == null) {
+            runb = new Runnable() {
+                public void run() {
+                    if (net.connectionAvailable()) {
+                        try {
+                            SQLiteOpenHelper shopDatabaseHelper = new SchoolDatabaseHelper(context);
+                            db = shopDatabaseHelper.getReadableDatabase();
 
-                        cursor = db.query(SchoolDatabaseHelper.TABLE_NAME,
-                                new String[]{SchoolDatabaseHelper._URL,
-                                        SchoolDatabaseHelper._SCHOOL,
-                                        SchoolDatabaseHelper._ID},
-                                SchoolDatabaseHelper._SHOW + " = ?",
-                                new String[]{"1"},
-                                null, null, null);
-                        for (int i = 1; i <= 25; i++) {
-                            if (dbFirst) {
-                                if (cursor.moveToFirst()) {
-                                    currentId = cursor.getString(2);
-                                    currentSchoolName = cursor.getString(1);
-                                    new ParsingTask().execute(cursor.getString(0));
-                                    dbFirst = false;
-                                }
-                            } else if (cursor.moveToNext()) {
+                            cursor = db.query(SchoolDatabaseHelper.TABLE_NAME,
+                                    new String[]{SchoolDatabaseHelper._URL,
+                                            SchoolDatabaseHelper._SCHOOL,
+                                            SchoolDatabaseHelper._ID},
+                                    SchoolDatabaseHelper._SHOW + " = ?",
+                                    new String[]{"1"},
+                                    null, null, null);
+
+                            if (cursor.moveToFirst()) {
                                 currentId = cursor.getString(2);
                                 currentSchoolName = cursor.getString(1);
                                 new ParsingTask().execute(cursor.getString(0));
                             }
+                            while (cursor.moveToNext()) {
+                                currentId = cursor.getString(2);
+                                currentSchoolName = cursor.getString(1);
+                                new ParsingTask().execute(cursor.getString(0));
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
                         }
-                        dbFirst = true;
-                    } catch (Exception e) {
-                        e.printStackTrace();
                     }
-                }
                     handler.postDelayed(this, Constant.SECONDS_TO_SLEEP);
 
-            }
+                }
 
-        };
+            };
+        }
         handler.postDelayed(runb, 0);
 
         return START_STICKY;
@@ -107,20 +108,15 @@ public class NotificationService extends Service {
         return null;
     }
 
-    @Override
-    public void onCreate() {
-    }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
         serviceExist = false;
-        //startService(new Intent(this, NotificationService.class));
     }
 
     @Override
     public void onTaskRemoved(Intent rootIntent) {
-        //startService(new Intent(this, NotificationService.class));
         super.onTaskRemoved(rootIntent);
     }
 
@@ -129,7 +125,8 @@ public class NotificationService extends Service {
                               String newUrl, String url, String id) {
 
         Intent intent = new Intent(this, MainActivity.class);
-        intent.putExtra(Constant.SCHOOL_NAME, notificationTitle);
+        intent.putExtra(Constant.NOTIFICATION_CLICKED, "1");
+        intent.putExtra(Constant.ID, id);
         intent.putExtra(Constant.NEW_URL, newUrl);
         intent.putExtra(Constant.URL, url);
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
@@ -140,7 +137,7 @@ public class NotificationService extends Service {
                 PendingIntent.FLAG_CANCEL_CURRENT);
 
         Notification notific = new Notification.Builder(this)
-                .setSmallIcon(R.mipmap.ic_launcher_round)
+                .setSmallIcon(R.mipmap.ic_launcher)
                 .setContentTitle(notificationTitle)
                 .setAutoCancel(true)
                 .setContentIntent(pendingIntent)
@@ -156,7 +153,7 @@ public class NotificationService extends Service {
     private class ParsingTask extends AsyncTask<String, Void, Void> {
 
         String schoolName = "";
-        String id ="0";
+        String id = "0";
         String url = "";
         String parsedTitle = "";
         String parsedUrl = "";
@@ -178,7 +175,7 @@ public class NotificationService extends Service {
 
                     doc = Jsoup.connect(url).timeout(Constant.SECONDS_TO_TIMEOUT).get();
 
-                    if (!url.equals(getResources().getString(R.string.site_school_kiblarivska)))
+                    if(!url.equals(getResources().getString(R.string.site_school_kiblarivska)))
                         titleElements = doc.getElementsByAttributeValue("class", "eTitle");
                     else
                         titleElements = doc.getElementsByAttributeValue("class", "news-item");
@@ -194,7 +191,7 @@ public class NotificationService extends Service {
                             parsedUrl = titleElements.get(0).child(0).attr("href");
                             parsedTitle = titleElements.get(0).text();
 
-                        } else if (url.equals(getResources().getString(R.string.site_mon_gov))) {
+                        }else if (url.equals(getResources().getString(R.string.site_mon_gov))) {
                             titleElements = doc.getElementsByAttributeValue("id", "tab1");
                             parsedUrl = titleElements.get(0).child(0).child(0).child(2).attr("href");
                             parsedTitle = titleElements.get(0).child(0).child(0).child(2).child(0).text();
@@ -302,6 +299,7 @@ public class NotificationService extends Service {
                             parsedTitle = titleElements.get(0).text();
 
                         } else if (url.equals(getResources().getString(R.string.site_school_kiblarivska))) {
+                            titleElements = doc.getElementsByAttributeValue("class", "eTitle");
                             parsedTitle = titleElements.get(0).child(1).text();
                             parsedUrl = titleElements.get(0).child(2).attr("href");
 
@@ -326,6 +324,7 @@ public class NotificationService extends Service {
                     } catch (Exception e) {
                         e.printStackTrace();
                         parsedTitle = "";
+                        parsedUrl = "";
                     }
                 }
 

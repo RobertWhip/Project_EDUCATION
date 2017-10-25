@@ -9,8 +9,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
-import android.os.AsyncTask;
+
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -21,6 +22,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.WindowManager;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -32,12 +34,6 @@ import com.example.mechanic_pc.uzhgorodschools.data.db.SchoolDatabaseHelper;
 import com.example.mechanic_pc.uzhgorodschools.service.NotificationService;
 import com.example.mechanic_pc.uzhgorodschools.utils.Constant;
 import com.example.mechanic_pc.uzhgorodschools.utils.InternetConnection;
-
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.select.Elements;
-
-import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -54,9 +50,9 @@ public class MainActivity extends AppCompatActivity
         private LinearLayout layoutFabSendSms;
         private LinearLayout layoutFabSendEmail;
 
-    /* ---- QA ---- */
+    /* ---- QA ----
         private static HashMap<String, String> schoolsUrls = new HashMap<>();
-    /* ---- QA ---- */
+     ---- QA ---- */
 
     private WebView site;
 
@@ -64,7 +60,7 @@ public class MainActivity extends AppCompatActivity
     private String currentEmail = "none";
     private String currentUrl = "";
     private String schoolName = "";
-    private int schoolId = 1;
+    private int currentId = 1;
 
     private boolean choosedSite = false;
     private boolean start = true;
@@ -75,10 +71,12 @@ public class MainActivity extends AppCompatActivity
     private SQLiteDatabase db;
     private Cursor cursor;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_main);
 
         if(!(new InternetConnection(this).connectionAvailable())) {
@@ -168,33 +166,36 @@ public class MainActivity extends AppCompatActivity
             hideFab();
         // /> FAB
 
-
         context = this;
 
         site = (WebView) findViewById(R.id.site);
         WebSettings webViewSettings = site.getSettings();
         webViewSettings.setJavaScriptEnabled(true);
-        webViewSettings.setBuiltInZoomControls(true);
+        site.getSettings().setBuiltInZoomControls(true);
+        site.getSettings().setDisplayZoomControls(false);
 
         if(!isMyServiceRunning(NotificationService.class)){
             startService();
         }
 
         // Notification clicked <
+
             try {
+                if(getIntent().getExtras().get(Constant.NOTIFICATION_CLICKED).equals("1")) {
+                    currentUrl = getIntent().getExtras().get(Constant.URL).toString();
+                    String newUrl = getIntent().getExtras().get(Constant.NEW_URL).toString();
+                    currentId = Integer.parseInt(getIntent().getExtras().get(Constant.ID).toString());
 
-                String url = getIntent().getExtras().get(Constant.URL).toString();
-                String newUrl = getIntent().getExtras().get(Constant.NEW_URL).toString();
-                setTitle(getIntent().getExtras().get(Constant.SCHOOL_NAME).toString());
+                    site.loadUrl(currentUrl + newUrl);
+                    site.setWebViewClient(new WebViewClient());
 
-                currentUrl = url;
-
-                site.loadUrl(currentUrl + newUrl);
-                site.setWebViewClient(new WebViewClient());
-
-            } catch(Exception e) {
+                    //choosedSite = true;
+                    onNotificationClicked(currentId);
+                }
+            } catch (Exception e) {
                 e.printStackTrace();
             }
+
         // /> Notification clicked
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -207,7 +208,7 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        /* ---- QA ---- */
+        /* ---- QA ----
             schoolsUrls.put(getResources().getString(R.string.school_shishlivtsi), getResources().getString(R.string.site_school_shishlivtsi));
             schoolsUrls.put(getResources().getString(R.string.school_kontsivska), getResources().getString(R.string.site_school_kontsivska));
             schoolsUrls.put(getResources().getString(R.string.school_onokivska), getResources().getString(R.string.site_school_onokivska));
@@ -234,7 +235,7 @@ public class MainActivity extends AppCompatActivity
             schoolsUrls.put(getResources().getString(R.string.school_kholmkivksa), getResources().getString(R.string.site_school_kholmkivksa));
             schoolsUrls.put(getResources().getString(R.string.school_solomonivska), getResources().getString(R.string.site_school_solomonivska));
             schoolsUrls.put(getResources().getString(R.string.mon_gov), getResources().getString(R.string.site_mon_gov));
-         /* ---- QA ---- */
+          ---- QA ---- */
     }
 
     private void hideFab() {
@@ -259,7 +260,6 @@ public class MainActivity extends AppCompatActivity
         layoutFabCall.setVisibility(View.VISIBLE);
         layoutFabSendSms.setVisibility(View.VISIBLE);
         layoutFabSendEmail.setVisibility(View.VISIBLE);
-        //Change settings icon to 'X' icon
         fab.setImageResource(R.drawable.ic_arrow_drop_down_black_24dp);
         fabExpanded = true;
     }
@@ -305,13 +305,11 @@ public class MainActivity extends AppCompatActivity
                     new String[] {SchoolDatabaseHelper._SHOW,
                             SchoolDatabaseHelper._ID},
                     SchoolDatabaseHelper._ID + " = ?",
-                    new String[] { Integer.toString(schoolId) },
+                    new String[] { Integer.toString(currentId) },
                     null, null, null);
 
             if(cursor.moveToFirst()){
                 checked = cursor.getString(0).equals("1");
-                Toast.makeText(this, cursor.getString(0) + ":" + cursor.getString(1) + ":"
-                        + schoolId, Toast.LENGTH_SHORT).show();
             }
 
             cursor.close();
@@ -337,7 +335,7 @@ public class MainActivity extends AppCompatActivity
                 boolean writed = writeToDatabaseNews(false);
                 if(writed) {
                     item.setChecked(false);
-                    setDbOldTitleToNull(schoolId);
+                    setDbOldTitleToNull(currentId);
                 } else {
                     Toast.makeText(this, getResources().getString(R.string.error_cannot_write_data),
                             Toast.LENGTH_SHORT).show();
@@ -366,7 +364,7 @@ public class MainActivity extends AppCompatActivity
             startService(new Intent(this, NotificationService.class));
         }
 
-        private boolean isMyServiceRunning(Class<?> serviceClass) {
+    private boolean isMyServiceRunning(Class<?> serviceClass) {
         ActivityManager manager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
         for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
             if (serviceClass.getName().equals(service.service.getClassName())) {
@@ -377,7 +375,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private boolean setDbOldTitleToNull (int id) {
-        boolean result = false;
+        boolean result;
 
         try {
             SQLiteOpenHelper shopDatabaseHelper = new SchoolDatabaseHelper(this);
@@ -405,7 +403,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private boolean writeToDatabaseNews(boolean checked) {
-        boolean result = false;
+        boolean result;
 
         try {
             SQLiteOpenHelper shopDatabaseHelper = new SchoolDatabaseHelper(this);
@@ -419,7 +417,7 @@ public class MainActivity extends AppCompatActivity
             db.update(SchoolDatabaseHelper.TABLE_NAME,
                     values,
                     SchoolDatabaseHelper._ID + " = ?",
-                    new String[] { ""+schoolId });
+                    new String[] { Integer.toString(currentId) });
 
             db.close();
             result = true;
@@ -436,121 +434,171 @@ public class MainActivity extends AppCompatActivity
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
+        loadWebPageAndSchoolData(id, true);
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
+        return true;
+    }
+
+    private void loadWebPageAndSchoolData(int id, boolean pickedInDrawer) {
         if (id == R.id.school_shishlivtsi) {
-            currentUrl = schoolsUrls.get(getResources().getString(R.string.school_shishlivtsi));
-            schoolId = 1;
+            //currentUrl = schoolsUrls.get(getResources().getString(R.string.school_shishlivtsi));
+            currentId = 1;
         } else if (id == R.id.school_kontsivska){
-            currentUrl = schoolsUrls.get(getResources().getString(R.string.school_kontsivska));
-            schoolId = 2;
+            //currentUrl = schoolsUrls.get(getResources().getString(R.string.school_kontsivska));
+            currentId = 2;
         } else if (id == R.id.school_onokivska){
-            currentUrl = schoolsUrls.get(getResources().getString(R.string.school_onokivska));
-            schoolId = 3;
+            //currentUrl = schoolsUrls.get(getResources().getString(R.string.school_onokivska));
+            currentId = 3;
         } else if (id == R.id.school_surtivska){
-            currentUrl = schoolsUrls.get(getResources().getString(R.string.school_surtivska));
-            schoolId = 4;
+            //currentUrl = schoolsUrls.get(getResources().getString(R.string.school_surtivska));
+            currentId = 4;
         } else if (id == R.id.school_esenska){
-            currentUrl = schoolsUrls.get(getResources().getString(R.string.school_esenska));
-            schoolId = 5;
+            //currentUrl = schoolsUrls.get(getResources().getString(R.string.school_esenska));
+            currentId = 5;
         } else if (id == R.id.school_malodobronska){
-            currentUrl = schoolsUrls.get(getResources().getString(R.string.school_malodobronska));
-            schoolId = 6;
+            //currentUrl = schoolsUrls.get(getResources().getString(R.string.school_malodobronska));
+            currentId = 6;
         } else if (id == R.id.school_velikolazivska){
-            currentUrl = schoolsUrls.get(getResources().getString(R.string.school_velikolazivska));
-            schoolId = 7;
+           // currentUrl = schoolsUrls.get(getResources().getString(R.string.school_velikolazivska));
+            currentId = 7;
         } else if (id == R.id.school_storozhnitska){
-            currentUrl = schoolsUrls.get(getResources().getString(R.string.school_storozhnitska));
-            schoolId = 8;
+           // currentUrl = schoolsUrls.get(getResources().getString(R.string.school_storozhnitska));
+            currentId = 8;
         } else if (id == R.id.licey_velikodobronska){
-            currentUrl = schoolsUrls.get(getResources().getString(R.string.licey_velikodobronska));
-            schoolId = 9;
+            //currentUrl = schoolsUrls.get(getResources().getString(R.string.licey_velikodobronska));
+            currentId = 9;
         } else if (id == R.id.school_kamyanitska){
-            currentUrl = schoolsUrls.get(getResources().getString(R.string.school_kamyanitska));
-            schoolId = 10;
+           // currentUrl = schoolsUrls.get(getResources().getString(R.string.school_kamyanitska));
+            currentId = 10;
         } else if (id == R.id.school_ruskokomarivska){
-            currentUrl = schoolsUrls.get(getResources().getString(R.string.school_ruskokomarivska));
-            schoolId = 11;
+            //currentUrl = schoolsUrls.get(getResources().getString(R.string.school_ruskokomarivska));
+            currentId = 11;
         } else if (id == R.id.school_velikoheevtska){
-            currentUrl = schoolsUrls.get(getResources().getString(R.string.school_velikoheevetska));
-            schoolId = 12;
+           // currentUrl = schoolsUrls.get(getResources().getString(R.string.school_velikoheevetska));
+            currentId = 12;
         } else if (id == R.id.school_velikodobronska){
-            currentUrl = schoolsUrls.get(getResources().getString(R.string.school_velikodobronska));
-            schoolId = 13;
+            //currentUrl = schoolsUrls.get(getResources().getString(R.string.school_velikodobronska));
+            currentId = 13;
         } else if (id == R.id.school_rativetska){
-            currentUrl = schoolsUrls.get(getResources().getString(R.string.school_rativetska));
-            schoolId = 14;
+            //currentUrl = schoolsUrls.get(getResources().getString(R.string.school_rativetska));
+            currentId = 14;
         } else if (id == R.id.school_tisaashvanska){
-            currentUrl = schoolsUrls.get(getResources().getString(R.string.school_tisaashvanska));
-            schoolId = 15;
+            //currentUrl = schoolsUrls.get(getResources().getString(R.string.school_tisaashvanska));
+            currentId = 15;
         } else if (id == R.id.school_serednanska){
-            currentUrl = schoolsUrls.get(getResources().getString(R.string.school_serednanska));
-            schoolId = 16;
+            //currentUrl = schoolsUrls.get(getResources().getString(R.string.school_serednanska));
+            currentId = 16;
         } else if (id == R.id.school_koritnanska){
-            currentUrl = schoolsUrls.get(getResources().getString(R.string.school_koritnanska));
-            schoolId = 17;
+            //currentUrl = schoolsUrls.get(getResources().getString(R.string.school_koritnanska));
+            currentId = 17;
         } else if (id == R.id.school_chernivskoi){
-            currentUrl = schoolsUrls.get(getResources().getString(R.string.school_chernivskoi));
-            schoolId = 18;
+           // currentUrl = schoolsUrls.get(getResources().getString(R.string.school_chernivskoi));
+            currentId = 18;
         } else if (id == R.id.school_maloheevetska){
-            currentUrl = schoolsUrls.get(getResources().getString(R.string.school_maloheevetska));
-            schoolId = 19;
+           // currentUrl = schoolsUrls.get(getResources().getString(R.string.school_maloheevetska));
+            currentId = 19;
         } else if (id == R.id.school_palad_komarivetska){
-            currentUrl = schoolsUrls.get(getResources().getString(R.string.school_palad_komarivetska));
-            schoolId = 20;
+            //currentUrl = schoolsUrls.get(getResources().getString(R.string.school_palad_komarivetska));
+            currentId = 20;
         } else if (id == R.id.school_hudlivska){
-            currentUrl = schoolsUrls.get(getResources().getString(R.string.school_hudlivska));
-            schoolId = 21;
+            //currentUrl = schoolsUrls.get(getResources().getString(R.string.school_hudlivska));
+            currentId = 21;
         } else if (id == R.id.school_kiblarivska){
-            currentUrl = schoolsUrls.get(getResources().getString(R.string.school_kiblarivska));
+            //currentUrl = schoolsUrls.get(getResources().getString(R.string.school_kiblarivska));
             site.loadUrl(getResources().getString(R.string.site_school_kiblarivska));
-            schoolId = 22;
+            currentId = 22;
         } else if (id == R.id.school_solokivska){
-            currentUrl = schoolsUrls.get(getResources().getString(R.string.school_solovkivska));
-            schoolId = 23;
+            //currentUrl = schoolsUrls.get(getResources().getString(R.string.school_solovkivska));
+            currentId = 23;
         } else if (id == R.id.school_kholmkivska){
-            currentUrl = schoolsUrls.get(getResources().getString(R.string.school_kholmkivksa));
-            schoolId = 24;
+            //currentUrl = schoolsUrls.get(getResources().getString(R.string.school_kholmkivksa));
+            currentId = 24;
         } else if (id == R.id.school_solomonivska){
-            currentUrl = schoolsUrls.get(getResources().getString(R.string.school_solomonivska));
-            schoolId = 25;
+            //currentUrl = schoolsUrls.get(getResources().getString(R.string.school_solomonivska));
+            currentId = 25;
         } else if (id == R.id.mon_gov){
-            currentUrl = "http://mon.gov.ua/";
-            schoolId = 26;
+            //currentUrl = "http://mon.gov.ua";
+            currentId = 26;
         } else if (id == R.id.metodkab){
-            currentUrl = "http://metodkab-uz.ucoz.ua/";
-            schoolId = 27;
+            //currentUrl = "http://metodkab-uz.ucoz.ua";
+            currentId = 27;
+        }
+            choosedSite = true;
+            if (start) {
+                onCreateOptionsMenu(menu);
+                start = false;
+            }
+
+        setSchoolData(currentId);
+        menuItemVisibility();
+        currentUrl = getUrlById(currentId);
+
+        /* ---- QA ----
+        if (new InternetConnection (this).connectionAvailable()){
+            ParsingTask task = new ParsingTask();
+            task.execute(currentUrl);
+        }
+          ---- QA ---- */
+
+        if (pickedInDrawer) {
+            site.loadUrl(currentUrl);
+            site.setWebViewClient(new WebViewClient());
+        }
+    }
+
+    private String getUrlById (int id) {
+        String url = "";
+
+        switch(id){
+            case 1: url = getResources().getString(R.string.site_school_shishlivtsi); break;
+            case 2: url = getResources().getString(R.string.site_school_kontsivska); break;
+            case 3: url = getResources().getString(R.string.site_school_onokivska); break;
+            case 4: url = getResources().getString(R.string.site_school_surtivska); break;
+            case 5: url = getResources().getString(R.string.site_school_esenska); break;
+            case 6: url = getResources().getString(R.string.site_school_malodobronska); break;
+            case 7:  url = getResources().getString(R.string.site_school_velikolazivska); break;
+            case 8: url = getResources().getString(R.string.site_school_storozhnitska); break;
+            case 9: url = getResources().getString(R.string.site_licey_velikodobronska); break;
+            case 10: url = getResources().getString(R.string.site_school_kamyanitska); break;
+            case 11: url = getResources().getString(R.string.site_school_ruskokomarivska); break;
+            case 12: url = getResources().getString(R.string.site_school_velikoheevetska); break;
+            case 13: url = getResources().getString(R.string.site_school_velikodobronska); break;
+            case 14: url = getResources().getString(R.string.site_school_rativetska); break;
+            case 15: url = getResources().getString(R.string.site_school_tisaashvanska); break;
+            case 16: url = getResources().getString(R.string.site_school_serednanska); break;
+            case 17: url = getResources().getString(R.string.site_school_koritnanska); break;
+            case 18: url = getResources().getString(R.string.site_school_chernivskoi); break;
+            case 19: url = getResources().getString(R.string.site_school_maloheevetska); break;
+            case 20: url = getResources().getString(R.string.site_school_palad_komarivetska); break;
+            case 21: url = getResources().getString(R.string.site_school_hudlivska); break;
+            case 22: url = getResources().getString(R.string.site_school_kiblarivska); break;
+            case 23: url = getResources().getString(R.string.site_school_solovkivska); break;
+            case 24: url = getResources().getString(R.string.site_school_kholmkivksa); break;
+            case 25: url = getResources().getString(R.string.site_school_solomonivska); break;
+            case 26: url = getResources().getString(R.string.site_mon_gov); break;
+            case 27: url = getResources().getString(R.string.site_metodkab); break;
         }
 
-        setSchoolData(schoolId);
+        return url;
+    }
 
-        choosedSite = true;
-        if(start) {
-            onCreateOptionsMenu(menu);
-            start = false;
-        }
-        if(schoolId == 3 || schoolId == 15 || schoolId == 20 || schoolId == 23)
+    private void onNotificationClicked(int id) {
+        setSchoolData(id);
+    }
+
+    private void menuItemVisibility () {
+        if(currentId == 3 || currentId == 15 || currentId == 20 || currentId == 23)
             menu.findItem(R.id.action_show_notification).setVisible(false);
         else {
             menu.findItem(R.id.action_show_notification).setVisible(true);
             setCheckedIfCheckedShowingNotification();
         }
-
-        /* ---- QA ---- */
-            if (new InternetConnection (this).connectionAvailable()){
-                ParsingTask task = new ParsingTask();
-                task.execute(currentUrl);
-            }
-         /* ---- QA ---- */
-
-        site.loadUrl(currentUrl);
-        site.setWebViewClient(new WebViewClient());
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
-        return true;
     }
 
     private String getOneWord(String word) {
@@ -559,7 +607,6 @@ public class MainActivity extends AppCompatActivity
 
     private boolean setContactData(int id) {
         boolean result = false;
-
 
         try {
             SQLiteOpenHelper helper = new SchoolDatabaseHelper(this);
@@ -585,8 +632,7 @@ public class MainActivity extends AppCompatActivity
         return result;
     }
 
-    private boolean setSchoolData (int id) {
-        boolean result = false;
+    private void setSchoolData (int id) {
 
         if (!setContactData(id))
             hideFab();
@@ -595,9 +641,6 @@ public class MainActivity extends AppCompatActivity
 
         setSchoolNameTitle(id);
 
-
-
-        return result;
     }
 
     private boolean setSchoolNameTitle(int id) {
@@ -630,7 +673,7 @@ public class MainActivity extends AppCompatActivity
         return result;
     }
 
-    /* ---- QA ---- */
+    /* ---- QA ----
         private class ParsingTask extends AsyncTask<String, Void, Void>{
             String url;
             String parsedTitle;
@@ -643,7 +686,7 @@ public class MainActivity extends AppCompatActivity
                 Elements titleElements = null, dateElements = null;
                 try {
 
-                    doc = Jsoup.connect(url).get();
+                    doc = Jsoup.connect(url).timeout(Constant.SECONDS_TO_TIMEOUT).get();
 
                     if(!url.equals(getResources().getString(R.string.site_school_kiblarivska)))
                         titleElements = doc.getElementsByAttributeValue("class", "eTitle");
@@ -806,5 +849,5 @@ public class MainActivity extends AppCompatActivity
                 Toast.makeText(MainActivity.this, parsedDate, Toast.LENGTH_LONG).show();
             }
         }
-    /* ---- QA ---- */
+     ---- QA ---- */
 }
