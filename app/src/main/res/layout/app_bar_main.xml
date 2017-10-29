@@ -20,7 +20,8 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <include layout="@layout/content_main" />
+    <include layout="@layout/content_main"
+        android:id="@+id/include" />
     <LinearLayout
         android:id="@+id/layoutFabSendEmail"
         android:layout_width="wrap_content"
@@ -151,4 +152,46 @@
         app:backgroundTint="@color/colorPrimary"
         android:src="@drawable/ic_contacts_black_24dp" />
 
+    <ImageView
+        android:id="@+id/splash_1"
+        android:layout_width="53dp"
+        android:layout_height="59dp"
+        android:layout_gravity="bottom|right"
+        app:layout_anchor="@+id/include"
+        app:layout_anchorGravity="top|left"
+        android:src="@drawable/ic_arrow_upward_black_24dp" />
+
+    <ImageView
+        android:id="@+id/splash_0"
+        android:layout_width="238dp"
+        android:layout_height="304dp"
+        android:layout_gravity="center_vertical|center_horizontal"
+        app:layout_anchor="@+id/include"
+        app:layout_anchorGravity="center_vertical|center_horizontal"
+        app:srcCompat="@mipmap/yearbook" />
+
+
+    <ImageView
+        android:id="@+id/progress_back"
+        android:layout_width="42dp"
+        android:layout_height="34dp"
+        android:layout_gravity="bottom|center_horizontal"
+        app:layout_anchor="@+id/include"
+        app:layout_anchorGravity="top|center_horizontal"
+        android:src="@drawable/ic_lens_progress_back_24dp"
+        android:visibility="invisible">
+
+    </ImageView>
+
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="38dp"
+        android:layout_height="33dp"
+        android:layout_gravity="bottom|center_horizontal"
+        android:visibility="invisible"
+        app:layout_anchor="@+id/include"
+        app:layout_anchorGravity="top|center_horizontal"
+        android:paddingTop="0.8dp"
+        android:theme="@style/AppTheme.WhiteAccent" />
 </android.support.design.widget.CoordinatorLayout>

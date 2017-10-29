@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Школи Ужгородського Району</string>
 
-    <string name="action_show_notification">Показати новини</string>
+    <string name="action_show_notification">Отримати оповіщення</string>
     <string name="action_refresh">Перезагрузити</string>
 
     <string name="navigation_drawer_open">Відкрити</string>

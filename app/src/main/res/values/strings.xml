@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Schools at Uzhhorod Region</string>
 
-    <string name="action_show_notification">Show notifications</string>
+    <string name="action_show_notification">Get notifications</string>
     <string name="action_refresh">Refresh</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>

@@ -8,11 +8,13 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.graphics.Bitmap;
 import android.net.Uri;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -26,7 +28,9 @@ import android.view.WindowManager;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.example.mechanic_pc.uzhgorodschools.R;
@@ -71,6 +75,10 @@ public class MainActivity extends AppCompatActivity
     private SQLiteDatabase db;
     private Cursor cursor;
 
+    private ImageView splashZero, splashOne, progressBack;
+    private ProgressBar progress;
+
+    private int transition = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -179,23 +187,21 @@ public class MainActivity extends AppCompatActivity
         }
 
         // Notification clicked <
-
             try {
                 if(getIntent().getExtras().get(Constant.NOTIFICATION_CLICKED).equals("1")) {
+                    hideSplash();
                     currentUrl = getIntent().getExtras().get(Constant.URL).toString();
                     String newUrl = getIntent().getExtras().get(Constant.NEW_URL).toString();
                     currentId = Integer.parseInt(getIntent().getExtras().get(Constant.ID).toString());
 
                     site.loadUrl(currentUrl + newUrl);
-                    site.setWebViewClient(new WebViewClient());
+                    site.setWebViewClient(new WebViewWithProgressBar());
 
-                    //choosedSite = true;
                     onNotificationClicked(currentId);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
         // /> Notification clicked
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -235,33 +241,12 @@ public class MainActivity extends AppCompatActivity
             schoolsUrls.put(getResources().getString(R.string.school_kholmkivksa), getResources().getString(R.string.site_school_kholmkivksa));
             schoolsUrls.put(getResources().getString(R.string.school_solomonivska), getResources().getString(R.string.site_school_solomonivska));
             schoolsUrls.put(getResources().getString(R.string.mon_gov), getResources().getString(R.string.site_mon_gov));
-          ---- QA ---- */
-    }
+         ---- QA ----*/
 
-    private void hideFab() {
-        fab.setVisibility(View.INVISIBLE);
-    }
-
-    private void showFab() {
-        fab.setVisibility(View.VISIBLE);
-    }
-
-    //closes FAB submenus
-    private void closeSubMenusFab(){
-        layoutFabCall.setVisibility(View.INVISIBLE);
-        layoutFabSendSms.setVisibility(View.INVISIBLE);
-        layoutFabSendEmail.setVisibility(View.INVISIBLE);
-        fab.setImageResource(R.drawable.ic_contacts_black_24dp);
-        fabExpanded = false;
-    }
-
-    //Opens FAB submenus
-    private void openSubMenusFab(){
-        layoutFabCall.setVisibility(View.VISIBLE);
-        layoutFabSendSms.setVisibility(View.VISIBLE);
-        layoutFabSendEmail.setVisibility(View.VISIBLE);
-        fab.setImageResource(R.drawable.ic_arrow_drop_down_black_24dp);
-        fabExpanded = true;
+        splashZero = (ImageView) findViewById(R.id.splash_0);
+        splashOne = (ImageView) findViewById(R.id.splash_1);
+        progress = (ProgressBar)findViewById(R.id.progress_bar);
+        progressBack = (ImageView) findViewById(R.id.progress_back);
     }
 
     @Override
@@ -269,7 +254,8 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
-        } else if (site.canGoBack()) {
+        } else if (site.canGoBack() && transition != 0){
+            transition--;
             site.goBack();
         } else {
             super.onBackPressed();
@@ -285,6 +271,64 @@ public class MainActivity extends AppCompatActivity
             getMenuInflater().inflate(R.menu.main, menu);
         }
         return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == R.id.action_show_notification) {
+            // set checked or unchecked the checkbox
+            // and then write it to the database
+            if(item.isChecked()) {
+                boolean writed = writeToDatabaseNews(false);
+                if(writed) {
+                    item.setChecked(false);
+                    setDbOldTitleToNull(currentId);
+                } else {
+                    Toast.makeText(this, getResources().getString(R.string.error_cannot_write_data),
+                            Toast.LENGTH_SHORT).show();
+                }
+            } else if(!item.isChecked()){
+                boolean writed = writeToDatabaseNews(true);
+                if(writed) {
+                    item.setChecked(true);
+                } else {
+                    Toast.makeText(this, getResources().getString(R.string.error_cannot_write_data),
+                            Toast.LENGTH_SHORT).show();
+                }
+            }
+            return true;
+
+        } else if (id == R.id.action_refresh) {
+            site.reload();
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    @SuppressWarnings("StatementWithEmptyBody")
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        // Handle navigation view item clicks here.
+        int id = item.getItemId();
+
+        transition = 0;
+
+        loadWebPageAndSchoolData(id, true);
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
+        return true;
+    }
+
+    private void hideFab() {
+        fab.setVisibility(View.INVISIBLE);
+    }
+
+    private void showFab() {
+        fab.setVisibility(View.VISIBLE);
     }
 
     private void setCheckedIfCheckedShowingNotification(){
@@ -323,46 +367,33 @@ public class MainActivity extends AppCompatActivity
 
         return checked;
     }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-
-        if (id == R.id.action_show_notification) {
-            // set checked or unchecked the checkbox
-            // and then write it to the database
-            if(item.isChecked()) {
-                boolean writed = writeToDatabaseNews(false);
-                if(writed) {
-                    item.setChecked(false);
-                    setDbOldTitleToNull(currentId);
-                } else {
-                    Toast.makeText(this, getResources().getString(R.string.error_cannot_write_data),
-                            Toast.LENGTH_SHORT).show();
-                }
-            } else if(!item.isChecked()){
-                boolean writed = writeToDatabaseNews(true);
-                if(writed) {
-                    item.setChecked(true);
-                } else {
-                    Toast.makeText(this, getResources().getString(R.string.error_cannot_write_data),
-                            Toast.LENGTH_SHORT).show();
-                }
-            }
-            return true;
-
-        } else if (id == R.id.action_refresh) {
-            site.reload();
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
+    //closes FAB submenus
+    private void closeSubMenusFab(){
+        layoutFabCall.setVisibility(View.INVISIBLE);
+        layoutFabSendSms.setVisibility(View.INVISIBLE);
+        layoutFabSendEmail.setVisibility(View.INVISIBLE);
+        fab.setImageResource(R.drawable.ic_contacts_black_24dp);
+        fabExpanded = false;
     }
 
-        private void startService() {
-            stopService(new Intent(this, NotificationService.class));
-            startService(new Intent(this, NotificationService.class));
-        }
+    //Opens FAB submenus
+    private void openSubMenusFab(){
+        layoutFabCall.setVisibility(View.VISIBLE);
+        layoutFabSendSms.setVisibility(View.VISIBLE);
+        layoutFabSendEmail.setVisibility(View.VISIBLE);
+        fab.setImageResource(R.drawable.ic_arrow_drop_down_black_24dp);
+        fabExpanded = true;
+    }
+
+    private void hideSplash() {
+        splashZero.setVisibility(View.INVISIBLE);
+        splashOne.setVisibility(View.INVISIBLE);
+    }
+
+    private void startService() {
+        stopService(new Intent(this, NotificationService.class));
+        startService(new Intent(this, NotificationService.class));
+    }
 
     private boolean isMyServiceRunning(Class<?> serviceClass) {
         ActivityManager manager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
@@ -431,110 +462,45 @@ public class MainActivity extends AppCompatActivity
         return result;
     }
 
-
-    @SuppressWarnings("StatementWithEmptyBody")
-    @Override
-    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        // Handle navigation view item clicks here.
-        int id = item.getItemId();
-
-        loadWebPageAndSchoolData(id, true);
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
-        return true;
-    }
-
     private void loadWebPageAndSchoolData(int id, boolean pickedInDrawer) {
-        if (id == R.id.school_shishlivtsi) {
-            //currentUrl = schoolsUrls.get(getResources().getString(R.string.school_shishlivtsi));
-            currentId = 1;
-        } else if (id == R.id.school_kontsivska){
-            //currentUrl = schoolsUrls.get(getResources().getString(R.string.school_kontsivska));
-            currentId = 2;
-        } else if (id == R.id.school_onokivska){
-            //currentUrl = schoolsUrls.get(getResources().getString(R.string.school_onokivska));
-            currentId = 3;
-        } else if (id == R.id.school_surtivska){
-            //currentUrl = schoolsUrls.get(getResources().getString(R.string.school_surtivska));
-            currentId = 4;
-        } else if (id == R.id.school_esenska){
-            //currentUrl = schoolsUrls.get(getResources().getString(R.string.school_esenska));
-            currentId = 5;
-        } else if (id == R.id.school_malodobronska){
-            //currentUrl = schoolsUrls.get(getResources().getString(R.string.school_malodobronska));
-            currentId = 6;
-        } else if (id == R.id.school_velikolazivska){
-           // currentUrl = schoolsUrls.get(getResources().getString(R.string.school_velikolazivska));
-            currentId = 7;
-        } else if (id == R.id.school_storozhnitska){
-           // currentUrl = schoolsUrls.get(getResources().getString(R.string.school_storozhnitska));
-            currentId = 8;
-        } else if (id == R.id.licey_velikodobronska){
-            //currentUrl = schoolsUrls.get(getResources().getString(R.string.licey_velikodobronska));
-            currentId = 9;
-        } else if (id == R.id.school_kamyanitska){
-           // currentUrl = schoolsUrls.get(getResources().getString(R.string.school_kamyanitska));
-            currentId = 10;
-        } else if (id == R.id.school_ruskokomarivska){
-            //currentUrl = schoolsUrls.get(getResources().getString(R.string.school_ruskokomarivska));
-            currentId = 11;
-        } else if (id == R.id.school_velikoheevtska){
-           // currentUrl = schoolsUrls.get(getResources().getString(R.string.school_velikoheevetska));
-            currentId = 12;
-        } else if (id == R.id.school_velikodobronska){
-            //currentUrl = schoolsUrls.get(getResources().getString(R.string.school_velikodobronska));
-            currentId = 13;
-        } else if (id == R.id.school_rativetska){
-            //currentUrl = schoolsUrls.get(getResources().getString(R.string.school_rativetska));
-            currentId = 14;
-        } else if (id == R.id.school_tisaashvanska){
-            //currentUrl = schoolsUrls.get(getResources().getString(R.string.school_tisaashvanska));
-            currentId = 15;
-        } else if (id == R.id.school_serednanska){
-            //currentUrl = schoolsUrls.get(getResources().getString(R.string.school_serednanska));
-            currentId = 16;
-        } else if (id == R.id.school_koritnanska){
-            //currentUrl = schoolsUrls.get(getResources().getString(R.string.school_koritnanska));
-            currentId = 17;
-        } else if (id == R.id.school_chernivskoi){
-           // currentUrl = schoolsUrls.get(getResources().getString(R.string.school_chernivskoi));
-            currentId = 18;
-        } else if (id == R.id.school_maloheevetska){
-           // currentUrl = schoolsUrls.get(getResources().getString(R.string.school_maloheevetska));
-            currentId = 19;
-        } else if (id == R.id.school_palad_komarivetska){
-            //currentUrl = schoolsUrls.get(getResources().getString(R.string.school_palad_komarivetska));
-            currentId = 20;
-        } else if (id == R.id.school_hudlivska){
-            //currentUrl = schoolsUrls.get(getResources().getString(R.string.school_hudlivska));
-            currentId = 21;
-        } else if (id == R.id.school_kiblarivska){
-            //currentUrl = schoolsUrls.get(getResources().getString(R.string.school_kiblarivska));
-            site.loadUrl(getResources().getString(R.string.site_school_kiblarivska));
-            currentId = 22;
-        } else if (id == R.id.school_solokivska){
-            //currentUrl = schoolsUrls.get(getResources().getString(R.string.school_solovkivska));
-            currentId = 23;
-        } else if (id == R.id.school_kholmkivska){
-            //currentUrl = schoolsUrls.get(getResources().getString(R.string.school_kholmkivksa));
-            currentId = 24;
-        } else if (id == R.id.school_solomonivska){
-            //currentUrl = schoolsUrls.get(getResources().getString(R.string.school_solomonivska));
-            currentId = 25;
-        } else if (id == R.id.mon_gov){
-            //currentUrl = "http://mon.gov.ua";
-            currentId = 26;
-        } else if (id == R.id.metodkab){
-            //currentUrl = "http://metodkab-uz.ucoz.ua";
-            currentId = 27;
-        }
-            choosedSite = true;
-            if (start) {
-                onCreateOptionsMenu(menu);
-                start = false;
-            }
 
+        switch (id) {
+            case R.id.school_shishlivtsi: currentId = 1; break;
+            case R.id.school_kontsivska: currentId = 2; break;
+            case R.id.school_onokivska: currentId = 3; break;
+            case R.id.school_surtivska: currentId = 4; break;
+            case R.id.school_esenska: currentId = 5; break;
+            case R.id.school_malodobronska: currentId = 6; break;
+            case R.id.school_velikolazivska: currentId = 7; break;
+            case R.id.school_storozhnitska: currentId = 8; break;
+            case R.id.licey_velikodobronska: currentId = 9; break;
+            case R.id.school_kamyanitska: currentId = 10; break;
+            case R.id.school_ruskokomarivska: currentId = 11; break;
+            case R.id.school_velikoheevtska: currentId = 12; break;
+            case R.id.school_velikodobronska: currentId = 13; break;
+            case R.id.school_rativetska: currentId = 14; break;
+            case R.id.school_tisaashvanska: currentId = 15; break;
+            case R.id.school_serednanska: currentId = 16; break;
+            case R.id.school_koritnanska: currentId = 17; break;
+            case R.id.school_chernivskoi: currentId = 18; break;
+            case R.id.school_maloheevetska: currentId = 19; break;
+            case R.id.school_palad_komarivetska: currentId = 20; break;
+            case R.id.school_hudlivska: currentId = 21; break;
+            case R.id.school_kiblarivska: currentId = 22; break;
+            case R.id.school_solokivska: currentId = 23; break;
+            case R.id.school_kholmkivska: currentId = 24; break;
+            case R.id.school_solomonivska: currentId = 25; break;
+            case R.id.mon_gov: currentId = 26; break;
+            case R.id.metodkab: currentId = 27; break;
+        }
+
+        choosedSite = true;
+        if (start) {
+            onCreateOptionsMenu(menu);
+            start = false;
+        }
+
+        hideSplash();
         setSchoolData(currentId);
         menuItemVisibility();
         currentUrl = getUrlById(currentId);
@@ -544,11 +510,11 @@ public class MainActivity extends AppCompatActivity
             ParsingTask task = new ParsingTask();
             task.execute(currentUrl);
         }
-          ---- QA ---- */
+         ---- QA ---- */
 
         if (pickedInDrawer) {
             site.loadUrl(currentUrl);
-            site.setWebViewClient(new WebViewClient());
+            site.setWebViewClient(new WebViewWithProgressBar());
         }
     }
 
@@ -562,7 +528,7 @@ public class MainActivity extends AppCompatActivity
             case 4: url = getResources().getString(R.string.site_school_surtivska); break;
             case 5: url = getResources().getString(R.string.site_school_esenska); break;
             case 6: url = getResources().getString(R.string.site_school_malodobronska); break;
-            case 7:  url = getResources().getString(R.string.site_school_velikolazivska); break;
+            case 7: url = getResources().getString(R.string.site_school_velikolazivska); break;
             case 8: url = getResources().getString(R.string.site_school_storozhnitska); break;
             case 9: url = getResources().getString(R.string.site_licey_velikodobronska); break;
             case 10: url = getResources().getString(R.string.site_school_kamyanitska); break;
@@ -584,7 +550,6 @@ public class MainActivity extends AppCompatActivity
             case 26: url = getResources().getString(R.string.site_mon_gov); break;
             case 27: url = getResources().getString(R.string.site_metodkab); break;
         }
-
         return url;
     }
 
@@ -593,12 +558,13 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void menuItemVisibility () {
-        if(currentId == 3 || currentId == 15 || currentId == 20 || currentId == 23)
-            menu.findItem(R.id.action_show_notification).setVisible(false);
-        else {
-            menu.findItem(R.id.action_show_notification).setVisible(true);
-            setCheckedIfCheckedShowingNotification();
-        }
+            if (currentId == 3 || currentId == 15 || currentId == 20 || currentId == 23)
+                menu.findItem(R.id.action_show_notification).setVisible(false);
+            else {
+                if(!menu.findItem(R.id.action_show_notification).isVisible())
+                    menu.findItem(R.id.action_show_notification).setVisible(true);
+                setCheckedIfCheckedShowingNotification();
+            }
     }
 
     private String getOneWord(String word) {
@@ -633,7 +599,6 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void setSchoolData (int id) {
-
         if (!setContactData(id))
             hideFab();
         else
@@ -673,8 +638,44 @@ public class MainActivity extends AppCompatActivity
         return result;
     }
 
+    private void showProgressBar () {
+        progressBack.setVisibility(View.VISIBLE);
+        progress.setVisibility(View.VISIBLE);
+    }
+
+    private void hideProgressBar() {
+        progressBack.setVisibility(View.INVISIBLE);
+        progress.setVisibility(View.INVISIBLE);
+    }
+
+    private class WebViewWithProgressBar extends WebViewClient {
+
+        @Override
+        public void onPageStarted(WebView view, String url, Bitmap favicon) {
+            super.onPageStarted(view, url, favicon);
+            showProgressBar();
+        }
+
+        @Override
+        public void onPageFinished(WebView view, String url) {
+            super.onPageFinished(view, url);
+            hideProgressBar();
+
+        }
+
+        @Override
+        public boolean shouldOverrideUrlLoading(WebView view, String url) {
+            view.loadUrl(url);
+            transition++;
+
+            return super.shouldOverrideUrlLoading(view, url);
+        }
+
+
+    }
+
     /* ---- QA ----
-        private class ParsingTask extends AsyncTask<String, Void, Void>{
+        private class ParsingTask extends AsyncTask<String, Void, Void> {
             String url;
             String parsedTitle;
             String parsedDate = "";

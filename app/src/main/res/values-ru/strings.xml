@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Школы Ужгородского района</string>
 
-    <string name="action_show_notification">Показать новости</string>
+    <string name="action_show_notification">Получать уведомления</string>
     <string name="action_refresh">Перезагрузить</string>
 
     <string name="navigation_drawer_open">Открыть</string>
@@ -22,31 +22,32 @@
     <string name="error_unknown">Ошибка.</string>
     <string name="error_database_unavailable">База данных недоступен.</string>
 
-    <string name="school_shishlivtsi">Шишлівська ЗОШ І-ІІІ ст.</string>
-    <string name="school_kontsivska">Концівська ЗОШ І-ІІІ ст.</string>
-    <string name="school_onokivska">Оноківська ЗОШ І-ІІІ ст.</string>
-    <string name="school_surtivska">Сюртівська ЗОШ І-ІІІ ст.</string>
-    <string name="school_esenska">Есенська ЗОШ І-ІІ ст.</string>
-    <string name="school_malodobronska">Малодобронська ЗОШ І-ІІІ ст.</string>
-    <string name="school_velikolazivska">Великолазівська ЗОШ І-ІІІ ст.</string>
-    <string name="school_storozhnitska">Сторожницька ЗОШ І-ІІІ ст.</string>
-    <string name="licey_velikodobronska">Великодобронський ліцей</string>
-    <string name="school_kamyanitska">Кам\'яницька ЗОШ І-ІІІ ст.</string>
-    <string name="school_ruskokomarivska">Руськокомарівська ЗОШ І-ІІІ ст.</string>
-    <string name="school_velikoheevetska">Великогеєвецька ЗОШ І-ІІІ ст.</string>
-    <string name="school_velikodobronska">Великодобронська ЗОШ І-ІІІ ст.</string>
-    <string name="school_rativetska">Ратівецька ЗОШ І-ІІ ст.</string>
-    <string name="school_tisaashvanska">Тисаашванська ЗОШ І-ІІ ст.</string>
-    <string name="school_serednanska">Середнянська ЗОШ І-ІІІ ст.</string>
-    <string name="school_koritnanska">Коритнянська ЗОШ І-ІІІ ст.</string>
-    <string name="school_chernivskoi">Червонівської ЗОШ І-ІІІ ст.</string>
-    <string name="school_maloheevetska">Малогеєвецька ЗОШ І-ІІІ ст.</string>
-    <string name="school_palad_komarivetska">Паладь-Комарівецька ЗОШ І-ІІ ст.</string>
-    <string name="school_hudlivska">Худлівська ЗОШ І-ІІІ ст.</string>
-    <string name="school_kiblarivska">Киблярівська ЗОШ І-ІІ ст.</string>
-    <string name="school_solovkivska">Соловківська ЗОШ І-ІІ ст.</string>
-    <string name="school_kholmkivksa">Холмківська ЗОШ І-ІІ ст.</string>
-    <string name="school_solomonivska">Соломонівська ЗОШ І-ІІ ст.</string>
+    <string name="school_shishlivtsi">Shyshlivska School I-III dg.</string>
+    <string name="school_kontsivska">Kontsivska School I-III dg.</string>
+    <string name="school_onokivska">Onokivska School I-III dg.</string>
+    <string name="school_surtivska">Syurtivska School I-III dg.</string>
+    <string name="school_esenska">Esenska School I-III dg.</string>
+    <string name="school_malodobronska">Malodobronska School I-III dg.</string>
+    <string name="school_velikolazivska">Velykolazivska School I-III dg.</string>
+    <string name="school_storozhnitska">Storozhnytska School I-III dg.</string>
+    <string name="licey_velikodobronska">Velykodobronskiy lyceum</string>
+    <string name="school_kamyanitska">Kam\'yanytska School I-III dg.</string>
+    <string name="school_ruskokomarivska">Ruskokomarivska School I-III dg.</string>
+    <string name="school_velikoheevetska">Velykogeyevetska School I-III dg.</string>
+    <string name="school_velikodobronska">Velykodobronska School I-III dg.</string>
+    <string name="school_rativetska">Rativetska School I-II dg.</string>
+    <string name="school_tisaashvanska">Tysaashvanska ЗОШ I-II dg.</string>
+    <string name="school_serednanska">Serednyanska School I-III dg.</string>
+    <string name="school_koritnanska">Korytnyanska School I-III dg.</string>
+    <string name="school_chernivskoi">Chervonivskoyi School I-III dg.</string>
+    <string name="school_maloheevetska">Malogeyevetska School I-III dg.</string>
+    <string name="school_palad_komarivetska">Palad-Komarivetska School I-II dg.</string>
+    <string name="school_hudlivska">Khudlivska School I-III dg.</string>
+    <string name="school_kiblarivska">Kyblyarivska School I-II dg.</string>
+    <string name="school_solovkivska">Solovkivska School I-II dg.</string>
+    <string name="school_kholmkivksa">Kholmkivska School I-II dg.</string>
+    <string name="school_solomonivska">Solomonivska School I-II dg.</string>
+
     <string name="mon_gov">Министерство образования и науки Украины</string>
     <string name="metodkab">Информационный портал отдела образования, молодежи и спорта</string>
 

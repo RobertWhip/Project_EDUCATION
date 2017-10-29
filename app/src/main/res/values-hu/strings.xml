@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Az Uzhgorod körzet iskolái</string>
 
-    <string name="action_show_notification">Hírek megjelenítése</string>
+    <string name="action_show_notification">Értesítéseket kapni</string>
     <string name="action_refresh">Újraindítás</string>
 
     <string name="navigation_drawer_open">Kinyitás</string>
