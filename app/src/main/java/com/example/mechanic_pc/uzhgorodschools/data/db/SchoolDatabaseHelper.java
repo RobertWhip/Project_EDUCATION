@@ -183,6 +183,11 @@ public class SchoolDatabaseHelper extends SQLiteOpenHelper {
                     context.getResources().getString(R.string.site_metodkab), "", "0",
                     context.getResources().getString(R.string.phone_metodkab),
                     context.getResources().getString(R.string.email_metodkab));
+
+            insertCurrencyData(db, context.getResources().getString(R.string.zippo),
+                    context.getResources().getString(R.string.site_zippo), "", "0",
+                    context.getResources().getString(R.string.phone_zippo),
+                    context.getResources().getString(R.string.email_zippo));
         }
     }
 

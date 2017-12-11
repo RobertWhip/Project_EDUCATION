@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Школи Ужгородського Району</string>
+    <string name="app_name">Uzhensc</string>
 
     <string name="action_show_notification">Отримати оповіщення</string>
     <string name="action_refresh">Перезагрузити</string>
@@ -30,17 +30,17 @@
     <string name="school_malodobronska">Малодобронська ЗОШ І-ІІІ ст.</string>
     <string name="school_velikolazivska">Великолазівська ЗОШ І-ІІІ ст.</string>
     <string name="school_storozhnitska">Сторожницька ЗОШ І-ІІІ ст.</string>
-    <string name="licey_velikodobronska">Великодобронський ліцей</string>
+    <string name="licey_velikodobronska">Великодобронський Ліцей</string>
     <string name="school_kamyanitska">Кам\'яницька ЗОШ І-ІІІ ст.</string>
     <string name="school_ruskokomarivska">Руськокомарівська ЗОШ І-ІІІ ст.</string>
-    <string name="school_velikoheevetska">Великогеєвецька ЗОШ І-ІІІ ст.</string>
+    <string name="school_velikoheevetska">Великогеєвецька ЗОШ І-ІІ ст.</string>
     <string name="school_velikodobronska">Великодобронська ЗОШ І-ІІІ ст.</string>
     <string name="school_rativetska">Ратівецька ЗОШ І-ІІ ст.</string>
     <string name="school_tisaashvanska">Тисаашванська ЗОШ І-ІІ ст.</string>
     <string name="school_serednanska">Середнянська ЗОШ І-ІІІ ст.</string>
     <string name="school_koritnanska">Коритнянська ЗОШ І-ІІІ ст.</string>
     <string name="school_chernivskoi">Червонівської ЗОШ І-ІІІ ст.</string>
-    <string name="school_maloheevetska">Малогеєвецька ЗОШ І-ІІІ ст.</string>
+    <string name="school_maloheevetska">Малогеєвецька НВК І-ІІІ ст.</string>
     <string name="school_palad_komarivetska">Паладь-Комарівецька ЗОШ І-ІІ ст.</string>
     <string name="school_hudlivska">Худлівська ЗОШ І-ІІІ ст.</string>
     <string name="school_kiblarivska">Киблярівська ЗОШ І-ІІ ст.</string>
@@ -49,5 +49,6 @@
     <string name="school_solomonivska">Соломонівська ЗОШ І-ІІ ст.</string>
     <string name="mon_gov">Міністерство освіти і науки України</string>
     <string name="metodkab">Інформаційний портал відділу освіти, молоді та спорту</string>
+    <string name="zippo">ЗІППО</string>
 
 </resources>

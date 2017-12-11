@@ -27,13 +27,23 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
-        android:layout_gravity="bottom|end"
-        android:layout_marginBottom="100dp"
-        android:layout_marginRight="10dp"
+        android:layout_gravity="bottom|start"
+        android:layout_marginBottom="70dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginLeft="10dp"
         android:layout_above="@+id/fab"
         android:orientation="horizontal">
 
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fabSendEmail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_email_black_24dp"
+            app:backgroundTint="@color/colorPrimary"
+            app:fabSize="mini" />
+
         <android.support.v7.widget.CardView
+            android:id="@+id/textField1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:cardBackgroundColor="@color/cardview_light_background"
@@ -53,14 +63,6 @@
                 android:paddingTop="5dp" />
         </android.support.v7.widget.CardView>
 
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/fabSendEmail"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_email_black_24dp"
-            app:backgroundTint="@color/colorPrimary"
-            app:fabSize="mini" />
-
     </LinearLayout>
 
     <LinearLayout
@@ -68,12 +70,22 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
-        android:layout_gravity="bottom|end"
-        android:layout_marginBottom="160dp"
-        android:layout_marginRight="10dp"
+        android:layout_gravity="bottom|start"
+        android:layout_marginBottom="130dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginLeft="10dp"
         android:orientation="horizontal">
 
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fabSendSms"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_textsms_black_24dp"
+            app:backgroundTint="@color/colorPrimary"
+            app:fabSize="mini" />
+
         <android.support.v7.widget.CardView
+            android:id="@+id/textField2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:cardBackgroundColor="@color/cardview_light_background"
@@ -93,14 +105,6 @@
                 android:paddingTop="5dp" />
         </android.support.v7.widget.CardView>
 
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/fabSendSms"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_textsms_black_24dp"
-            app:backgroundTint="@color/colorPrimary"
-            app:fabSize="mini" />
-
     </LinearLayout>
 
     <LinearLayout
@@ -108,30 +112,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
-        android:layout_gravity="bottom|end"
-        android:layout_marginBottom="220dp"
-        android:layout_marginRight="10dp"
+        android:layout_gravity="bottom|start"
+        android:layout_marginBottom="190dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginLeft="10dp"
         android:orientation="horizontal">
-
-        <android.support.v7.widget.CardView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:cardBackgroundColor="@color/cardview_light_background"
-            app:cardCornerRadius="15dp"
-            app:cardElevation="10dp"
-            app:cardUseCompatPadding="true" >
-            <TextView
-                android:id="@+id/cvtCall"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/call_text"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:textStyle="bold"
-                android:paddingRight="8dp"
-                android:paddingLeft="8dp"
-                android:paddingBottom="5dp"
-                android:paddingTop="5dp" />
-        </android.support.v7.widget.CardView>
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/fabCall"
@@ -141,13 +126,35 @@
             app:backgroundTint="@color/colorPrimary"
             app:fabSize="mini" />
 
+        <android.support.v7.widget.CardView
+            android:id="@+id/textField3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:cardBackgroundColor="@color/cardview_light_background"
+            app:cardCornerRadius="15dp"
+            app:cardElevation="10dp"
+            app:cardUseCompatPadding="true">
+
+            <TextView
+                android:id="@+id/cvtCall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingBottom="5dp"
+                android:paddingLeft="8dp"
+                android:paddingRight="8dp"
+                android:paddingTop="5dp"
+                android:text="@string/call_text"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textStyle="bold" />
+        </android.support.v7.widget.CardView>
+
     </LinearLayout>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
+        android:layout_gravity="bottom|start"
         android:layout_margin="@dimen/fab_margin"
         app:backgroundTint="@color/colorPrimary"
         android:src="@drawable/ic_contacts_black_24dp" />

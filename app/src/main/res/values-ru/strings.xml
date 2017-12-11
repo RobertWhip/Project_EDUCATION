@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Школы Ужгородского района</string>
+    <string name="app_name">Uzhensc</string>
 
     <string name="action_show_notification">Получать уведомления</string>
     <string name="action_refresh">Перезагрузить</string>
@@ -30,10 +30,10 @@
     <string name="school_malodobronska">Malodobronska School I-III dg.</string>
     <string name="school_velikolazivska">Velykolazivska School I-III dg.</string>
     <string name="school_storozhnitska">Storozhnytska School I-III dg.</string>
-    <string name="licey_velikodobronska">Velykodobronskiy lyceum</string>
+    <string name="licey_velikodobronska">Velykodobronskiy Lyceum</string>
     <string name="school_kamyanitska">Kam\'yanytska School I-III dg.</string>
     <string name="school_ruskokomarivska">Ruskokomarivska School I-III dg.</string>
-    <string name="school_velikoheevetska">Velykogeyevetska School I-III dg.</string>
+    <string name="school_velikoheevetska">Velykogeyevetska School I-II dg.</string>
     <string name="school_velikodobronska">Velykodobronska School I-III dg.</string>
     <string name="school_rativetska">Rativetska School I-II dg.</string>
     <string name="school_tisaashvanska">Tysaashvanska ЗОШ I-II dg.</string>
@@ -50,5 +50,6 @@
 
     <string name="mon_gov">Министерство образования и науки Украины</string>
     <string name="metodkab">Информационный портал отдела образования, молодежи и спорта</string>
+    <string name="zippo">ZIPPO</string>
 
 </resources>

@@ -113,6 +113,7 @@ public class NotificationService extends Service {
     public void onDestroy() {
         super.onDestroy();
         serviceExist = false;
+        startService(new Intent(this, NotificationService.class));
     }
 
     @Override
@@ -129,6 +130,8 @@ public class NotificationService extends Service {
         intent.putExtra(Constant.ID, id);
         intent.putExtra(Constant.NEW_URL, newUrl);
         intent.putExtra(Constant.URL, url);
+        intent.putExtra(Constant.TITLE, notificationMessage);
+
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
         stackBuilder.addParentStack(MainActivity.class);
         stackBuilder.addNextIntent(intent);
@@ -315,7 +318,16 @@ public class NotificationService extends Service {
                         } else if (url.equals(getResources().getString(R.string.site_school_solomonivska))) {
                             parsedTitle = titleElements.get(0).child(0).text();
                             parsedUrl = titleElements.get(0).child(0).attr("href");
-                        } else
+
+                        } else if (url.equals(getResources().getString(R.string.site_zippo))) {
+                            titleElements = doc.getElementsByAttributeValue("class", "title");
+                            parsedTitle = titleElements.get(0).text();
+                            titleElements = doc.getElementsByAttributeValue("class", "item");
+                            parsedUrl = titleElements.get(0).attr("data-permalink");
+                            if (parsedUrl.startsWith(url)) {
+                                parsedUrl = parsedUrl.substring(url.length(), parsedUrl.length());
+                            }
+                        }else
                             parsedTitle = "";
 
                         if(!parsedUrl.startsWith("/"))

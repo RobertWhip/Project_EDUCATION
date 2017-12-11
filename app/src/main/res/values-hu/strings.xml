@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Az Uzhgorod körzet iskolái</string>
+    <string name="app_name">Uzhensc</string>
 
     <string name="action_show_notification">Értesítéseket kapni</string>
     <string name="action_refresh">Újraindítás</string>
@@ -19,7 +19,36 @@
     <string name="error_cannot_load_title">Nem sikerült betölteni a címet.</string>
     <string name="error_cannot_write_data">Nem sikerült beírni módosításokat az adatbázisba.</string>
     <string name="error_at_parsing">Hiba történt az Parsing során.</string>
-    <string name="error_unknown">Hiba.</string>
+    <string name="error_unknown">Ismeretlen hiba.</string>
     <string name="error_database_unavailable">Az adatbázis nem elérhető.</string>
+
+    <string name="school_shishlivtsi">Sislóci Középiskola</string>
+    <string name="school_kontsivska">Kontsivska School</string>
+    <string name="school_onokivska">Onokóci Középiskola</string>
+    <string name="school_surtivska">Szürtei Középiskola</string>
+    <string name="school_esenska">Eszenyi Középiskola</string>
+    <string name="school_malodobronska">Kisdobronyi Középiskola</string>
+    <string name="school_velikolazivska">Nagylázi Középiskola</string>
+    <string name="school_storozhnitska">Storozhnytska School</string>
+    <string name="licey_velikodobronska">Nagydobronyi Liceum</string>
+    <string name="school_kamyanitska">Kam\'yanytska School</string>
+    <string name="school_ruskokomarivska">Ruskokomarivska School</string>
+    <string name="school_velikoheevetska">Nagygejőci Általános Iskola</string>
+    <string name="school_velikodobronska">Nagydobronyi Középiskola</string>
+    <string name="school_rativetska">Ráti Középiskola</string>
+    <string name="school_tisaashvanska">Tiszaásványi Középiskola</string>
+    <string name="school_serednanska">Serednyanska School</string>
+    <string name="school_koritnanska">Kereknyei Középiskola</string>
+    <string name="school_chernivskoi">Chervonivskoyi School</string>
+    <string name="school_maloheevetska">Kisgejőci ONK</string>
+    <string name="school_palad_komarivetska">Palad-Komarivetska School</string>
+    <string name="school_hudlivska">Khudlivska School</string>
+    <string name="school_kiblarivska">Kyblyarivska School</string>
+    <string name="school_solovkivska">Solovkivska School</string>
+    <string name="school_kholmkivksa">Kholmkivska School</string>
+    <string name="school_solomonivska">Solomonivska School</string>
+    <string name="mon_gov">Ukrajna Oktatási és Tudományos Minisztériuma</string>
+    <string name="metodkab">Az Oktatási, Ifjúsági és Sport Részleg Információs portálja</string>
+    <string name="zippo">ZIPPO</string>
 
 </resources>
