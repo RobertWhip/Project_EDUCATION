@@ -49,3 +49,4 @@ v 0.2:
   - fixed the name of schools;
   - fixed and optimized WebViewClientWithProgressBar.class;
   - fixed title changer bug;
+  - renamed to: "Uzhensc".
