@@ -3,9 +3,9 @@
 
 APK file is located in "_APK" directory.
 
-This application is created for those people who interested in notifications by schools sites (Ukraine, Zakarpat obl., Uzhhorod Region) or communication with schools by calling or email sending; created for a contest (укр. Мала академія наук - МАН).
+This application is created for those people who interested in notifications by educational sites (Ukraine, Zakarpat obl., Uzhhorod Region) or communication with schools by calling or email sending; created for a contest (укр. Мала академія наук - МАН).
 
-In this application, the user can visit 27 (twenty seven) sites, get notifications from it (some sites are unavailable or not posting news), call the choosed school, send SMS, write an email.
+In this application, the user can visit 28 sites, get notifications from it (some sites are unavailable or not posting news), call the choosed school, send SMS, write an email.
 
 ### Languages in application:
  - English;
