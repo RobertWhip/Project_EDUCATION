@@ -21,7 +21,7 @@ In this application, the user can visit 28 sites, get notifications from it (som
  
 ### The application:
  - stores data (xml, database);
- - runs forever(uses service and boot receiver);
+ - runs forever (uses service and boot receiver);
  - can check if internet connection is available;
  - has navigation drawer;
  - has FAB (Floating Action Button).
