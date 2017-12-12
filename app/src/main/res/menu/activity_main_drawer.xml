@@ -8,13 +8,13 @@
             android:icon="@drawable/ic_lens_black_24dp"
             android:title="@string/mon_gov" />
         <item
-            android:id="@+id/metodkab"
-            android:icon="@drawable/ic_lens_black_24dp"
-            android:title="@string/metodkab" />
-        <item
             android:id="@+id/zippo"
             android:icon="@drawable/ic_lens_black_24dp"
             android:title="@string/zippo"/>
+        <item
+            android:id="@+id/metodkab"
+            android:icon="@drawable/ic_lens_black_24dp"
+            android:title="@string/metodkab" />
         <item
             android:id="@+id/school_koritnanska"
             android:icon="@drawable/ic_lens_black_24dp"
