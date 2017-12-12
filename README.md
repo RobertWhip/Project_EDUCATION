@@ -22,7 +22,7 @@ In this application, the user can visit 28 sites, get notifications from it (som
 ### The application:
  - stores data (xml, database);
  - runs forever (uses service and boot receiver);
- - can check if internet connection is available;
+ - can check internet connection availability;
  - has navigation drawer;
  - has FAB (Floating Action Button).
  
@@ -44,9 +44,9 @@ v 0.2:
   - changed FAB position;
   - edited splash title image;
   - fixed on click FAB bugs;
-  - added animations to object;
+  - added animations to objects;
   - added new site: "ZIPPO";
   - fixed the name of schools;
-  - fixed and optimized WebViewClientWithProgressBar.class;
+  - fixed and optimized WebViewClientWithProgressBar class;
   - fixed title changer bug;
   - renamed to: "Uzhensc".
