@@ -1,9 +1,9 @@
 package com.example.mechanic_pc.uzhgorodschools._activity;
 
-import android.app.ActivityManager;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
@@ -38,10 +38,12 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.example.mechanic_pc.uzhgorodschools.R;
+import com.example.mechanic_pc.uzhgorodschools.service.singleton.SingletonService;
 import com.example.mechanic_pc.uzhgorodschools.data.db.SchoolDatabaseHelper;
-import com.example.mechanic_pc.uzhgorodschools.service.NotificationService;
 import com.example.mechanic_pc.uzhgorodschools.utils.Constant;
 import com.example.mechanic_pc.uzhgorodschools.utils.InternetConnection;
+import com.example.mechanic_pc.uzhgorodschools.utils.LocaleManager;
+import com.example.mechanic_pc.uzhgorodschools.utils.SchoolDataManager;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -68,14 +70,13 @@ public class MainActivity extends AppCompatActivity
     private String currentPhone = "0";
     private String currentEmail = "none";
     private String currentUrl = "";
-    private String schoolName = "";
+    private String currentLanguage = "";
     private int currentId = 0;
     private int transition = 0;
     private boolean animationInProcess = false;
 
     private WebView site;
     private Menu menu = null;
-    private Context context;
     private SQLiteDatabase db;
     private Cursor cursor;
     private ImageView splashZero, splashOne, progressBack;
@@ -179,17 +180,13 @@ public class MainActivity extends AppCompatActivity
         hideFab();
         // /> FAB
 
-        context = this;
-
         site = (WebView) findViewById(R.id.site);
         WebSettings webViewSettings = site.getSettings();
         webViewSettings.setJavaScriptEnabled(true);
         site.getSettings().setBuiltInZoomControls(true);
         site.getSettings().setDisplayZoomControls(false);
 
-        if (!isMyServiceRunning(NotificationService.class)) {
-            startService();
-        }
+        SingletonService.execute(this);
 
         splashZero = (ImageView) findViewById(R.id.splash_0); // picture
         splashOne = (ImageView) findViewById(R.id.splash_1); // arrow
@@ -275,15 +272,18 @@ public class MainActivity extends AppCompatActivity
             orientationChanged();
         }
 
+        SharedPreferences sharedPreferences = getSharedPreferences(Constant.PREFERENCES,
+                Context.MODE_PRIVATE);
+        if (sharedPreferences.contains(Constant.LANGUAGE))
+            currentLanguage = sharedPreferences.getString(Constant.LANGUAGE, "");
+        else
+            currentLanguage = getResources().getString(R.string.language);
+
     }
 
-    private void orientationChanged() {
-        if (currentId != 0) {
-            site.loadUrl(currentUrl);
-            site.setWebViewClient(webClient);
-            hideSplash();
-            setSchoolData(currentId);
-        }
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(LocaleManager.setLocale(base));
     }
 
     @Override
@@ -320,6 +320,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
+        boolean changed = false;
 
         if (id == R.id.action_show_notification) {
             // set checked or unchecked the checkbox
@@ -347,6 +348,34 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.action_refresh) {
             site.reload();
             return true;
+        } else if (id == R.id.action_english) {
+            if (!currentLanguage.equals(Constant.ENGLISH)) {
+                currentLanguage = Constant.ENGLISH;
+                changed = true;
+            }
+        } else if (id == R.id.action_ukrainian) {
+            if (!currentLanguage.equals(Constant.UKRAINIAN)) {
+                currentLanguage = Constant.UKRAINIAN;
+                changed = true;
+            }
+        } else if (id == R.id.action_hungarian) {
+            if (!currentLanguage.equals(Constant.HUNGARIAN)) {
+                currentLanguage = Constant.HUNGARIAN;
+                changed = true;
+            }
+        }
+
+        if (id == R.id.action_english || id == R.id.action_ukrainian ||
+                                            id == R.id.action_hungarian) {
+            SharedPreferences sharedPreferences = getSharedPreferences(Constant.PREFERENCES,
+                    Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putString(Constant.LANGUAGE, currentLanguage);
+            editor.apply();
+
+            if (changed) {
+                recreate();
+            }
         }
 
         return super.onOptionsItemSelected(item);
@@ -379,6 +408,15 @@ public class MainActivity extends AppCompatActivity
             menu.findItem(R.id.action_show_notification)
                 .setChecked(checkIfCurrentUrlIsCheckedShowingNotification());
         return true;
+    }
+
+    private void orientationChanged() {
+        if (currentId != 0) {
+            site.loadUrl(currentUrl);
+            site.setWebViewClient(webClient);
+            hideSplash();
+            setSchoolData(currentId);
+        }
     }
 
     private void hideFab() {
@@ -537,24 +575,7 @@ public class MainActivity extends AppCompatActivity
         splashOne.setVisibility(View.GONE);
     }
 
-    private void startService() {
-        stopService(new Intent(this, NotificationService.class));
-        startService(new Intent(this, NotificationService.class));
-    }
-
-    private boolean isMyServiceRunning(Class<?> serviceClass) {
-        ActivityManager manager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
-        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
-            if (serviceClass.getName().equals(service.service.getClassName())) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private boolean setDbOldTitleToNull (int id) {
-        boolean result;
-
+    private void setDbOldTitleToNull (int id) {
         try {
             SQLiteOpenHelper shopDatabaseHelper = new SchoolDatabaseHelper(this);
             db = shopDatabaseHelper.getWritableDatabase();
@@ -568,14 +589,12 @@ public class MainActivity extends AppCompatActivity
                     new String[] { Integer.toString(id)});
 
             db.close();
-            result = true;
 
         } catch (Exception e) {
-            result = false;
+
             Toast.makeText(this, getResources().getString(R.string.error_cannot_write_data),
                     Toast.LENGTH_SHORT).show();
         }
-        return result;
     }
 
     private boolean writeToDatabaseNews(boolean checked) {
@@ -605,94 +624,9 @@ public class MainActivity extends AppCompatActivity
         return result;
     }
 
-    private void loadWebPageAndSchoolData(int id, boolean pickedInDrawer) {
+    private void loadWebPageAndSchoolData(int itemId, boolean pickedInDrawer) {
         if (pickedInDrawer) {
-            switch (id) {
-                case R.id.school_shishlivtsi:
-                    currentId = 1;
-                    break;
-                case R.id.school_kontsivska:
-                    currentId = 2;
-                    break;
-                case R.id.school_onokivska:
-                    currentId = 3;
-                    break;
-                case R.id.school_surtivska:
-                    currentId = 4;
-                    break;
-                case R.id.school_esenska:
-                    currentId = 5;
-                    break;
-                case R.id.school_malodobronska:
-                    currentId = 6;
-                    break;
-                case R.id.school_velikolazivska:
-                    currentId = 7;
-                    break;
-                case R.id.school_storozhnitska:
-                    currentId = 8;
-                    break;
-                case R.id.licey_velikodobronska:
-                    currentId = 9;
-                    break;
-                case R.id.school_kamyanitska:
-                    currentId = 10;
-                    break;
-                case R.id.school_ruskokomarivska:
-                    currentId = 11;
-                    break;
-                case R.id.school_velikoheevtska:
-                    currentId = 12;
-                    break;
-                case R.id.school_velikodobronska:
-                    currentId = 13;
-                    break;
-                case R.id.school_rativetska:
-                    currentId = 14;
-                    break;
-                case R.id.school_tisaashvanska:
-                    currentId = 15;
-                    break;
-                case R.id.school_serednanska:
-                    currentId = 16;
-                    break;
-                case R.id.school_koritnanska:
-                    currentId = 17;
-                    break;
-                case R.id.school_chernivskoi:
-                    currentId = 18;
-                    break;
-                case R.id.school_maloheevetska:
-                    currentId = 19;
-                    break;
-                case R.id.school_palad_komarivetska:
-                    currentId = 20;
-                    break;
-                case R.id.school_hudlivska:
-                    currentId = 21;
-                    break;
-                case R.id.school_kiblarivska:
-                    currentId = 22;
-                    break;
-                case R.id.school_solokivska:
-                    currentId = 23;
-                    break;
-                case R.id.school_kholmkivska:
-                    currentId = 24;
-                    break;
-                case R.id.school_solomonivska:
-                    currentId = 25;
-                    break;
-                case R.id.mon_gov:
-                    currentId = 26;
-                    break;
-                case R.id.metodkab:
-                    currentId = 27;
-                    break;
-                case R.id.zippo:
-                    currentId = 28;
-                    break;
-            }
+            currentId = SchoolDataManager.getSchoolId(itemId);
         }
 
         hideSplash();
@@ -712,39 +646,7 @@ public class MainActivity extends AppCompatActivity
         */
     }
     private String getUrlById (int id) {
-        String url = "";
-
-        switch(id){
-            case 1: url = getResources().getString(R.string.site_school_shishlivtsi); break;
-            case 2: url = getResources().getString(R.string.site_school_kontsivska); break;
-            case 3: url = getResources().getString(R.string.site_school_onokivska); break;
-            case 4: url = getResources().getString(R.string.site_school_surtivska); break;
-            case 5: url = getResources().getString(R.string.site_school_esenska); break;
-            case 6: url = getResources().getString(R.string.site_school_malodobronska); break;
-            case 7: url = getResources().getString(R.string.site_school_velikolazivska); break;
-            case 8: url = getResources().getString(R.string.site_school_storozhnitska); break;
-            case 9: url = getResources().getString(R.string.site_licey_velikodobronska); break;
-            case 10: url = getResources().getString(R.string.site_school_kamyanitska); break;
-            case 11: url = getResources().getString(R.string.site_school_ruskokomarivska); break;
-            case 12: url = getResources().getString(R.string.site_school_velikoheevetska); break;
-            case 13: url = getResources().getString(R.string.site_school_velikodobronska); break;
-            case 14: url = getResources().getString(R.string.site_school_rativetska); break;
-            case 15: url = getResources().getString(R.string.site_school_tisaashvanska); break;
-            case 16: url = getResources().getString(R.string.site_school_serednanska); break;
-            case 17: url = getResources().getString(R.string.site_school_koritnanska); break;
-            case 18: url = getResources().getString(R.string.site_school_chernivskoi); break;
-            case 19: url = getResources().getString(R.string.site_school_maloheevetska); break;
-            case 20: url = getResources().getString(R.string.site_school_palad_komarivetska); break;
-            case 21: url = getResources().getString(R.string.site_school_hudlivska); break;
-            case 22: url = getResources().getString(R.string.site_school_kiblarivska); break;
-            case 23: url = getResources().getString(R.string.site_school_solovkivska); break;
-            case 24: url = getResources().getString(R.string.site_school_kholmkivksa); break;
-            case 25: url = getResources().getString(R.string.site_school_solomonivska); break;
-            case 26: url = getResources().getString(R.string.site_mon_gov); break;
-            case 27: url = getResources().getString(R.string.site_metodkab); break;
-            case 28: url = getResources().getString(R.string.site_zippo); break;
-        }
-        return url;
+        return SchoolDataManager.getSchoolSiteUrl(this, id);
     }
 
     private void menuItemVisibility () {
@@ -799,34 +701,8 @@ public class MainActivity extends AppCompatActivity
         setSchoolNameTitle(id);
     }
 
-    private boolean setSchoolNameTitle(int id) {
-        boolean result = false;
-        SQLiteDatabase db;
-        Cursor cursor;
-
-        try {
-            SQLiteOpenHelper helper = new SchoolDatabaseHelper(this);
-            db = helper.getReadableDatabase();
-
-            cursor = db.query(SchoolDatabaseHelper.TABLE_NAME,
-                    new String[]{SchoolDatabaseHelper._SCHOOL},
-                    SchoolDatabaseHelper._ID + " = ?",
-                    new String[]{Integer.toString(id)},
-                    null, null, null);
-
-            if (cursor.moveToFirst()) {
-                schoolName = cursor.getString(0);
-                setTitle(getOneWord(schoolName));
-                    result = true;
-            }
-
-            cursor.close();
-
-        } catch (Exception e) {
-            result = false;
-        }
-
-        return result;
+    private void setSchoolNameTitle(int id) {
+        setTitle(SchoolDataManager.getSchoolTitle(this, id));
     }
 
     private void showProgressBar () {

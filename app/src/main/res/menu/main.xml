@@ -15,4 +15,17 @@
         android:icon="@drawable/ic_refresh_black_24dp"
         app:showAsAction="ifRoom" />
 
+    <item android:id="@+id/action_change_language"
+        android:title="@string/action_language" >
+        <!-- "file" submenu -->
+        <menu>
+            <item android:id="@+id/action_english"
+                android:title="@string/action_english" />
+            <item android:id="@+id/action_ukrainian"
+                android:title="@string/action_ukrainian" />
+            <item android:id="@+id/action_hungarian"
+                android:title="@string/action_hungarian"/>
+        </menu>
+    </item>
+
 </menu>
