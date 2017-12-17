@@ -17,7 +17,6 @@
 
     <item android:id="@+id/action_change_language"
         android:title="@string/action_language" >
-        <!-- "file" submenu -->
         <menu>
             <item android:id="@+id/action_english"
                 android:title="@string/action_english" />
