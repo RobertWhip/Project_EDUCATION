@@ -35,7 +35,7 @@ In this application, the user can visit 28 sites, get notifications from it (som
 ![p4](https://user-images.githubusercontent.com/22663206/32137166-ad7ee09c-bc1a-11e7-8013-44504cdbdbb5.PNG)
 
 ## Updates:
-v 0.2:
+### v 0.2:
   - released better optimization for battery;
   - Notification click fixed:
     - now "Get notification" check box works right;
