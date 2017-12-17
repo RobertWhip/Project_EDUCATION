@@ -24,7 +24,7 @@ In this application, the user can visit 28 sites, get notifications from it (som
  - can check internet connection availability;
  - has navigation drawer;
  - has FAB (Floating Action Button).
-#Images from v 0.1:
+# Images from v 0.1:
  
  
  
