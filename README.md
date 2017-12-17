@@ -10,7 +10,6 @@ In this application, the user can visit 28 sites, get notifications from it (som
 ### Languages in application:
  - English;
  - Ukrainian;
- - Russian;
  - Hungarian.
 
 ### Used permissions in application:
@@ -39,7 +38,7 @@ v 0.2:
   - released better optimization for battery;
   - Notification click fixed:
     - now "Get notification" check box works right;
-    - site loading bug;
+    - site loading bug.
   - released landscape orientation;
   - changed FAB position;
   - edited splash title image;
@@ -49,4 +48,14 @@ v 0.2:
   - fixed the name of schools;
   - fixed and optimized WebViewClientWithProgressBar class;
   - fixed title changer bug;
-  - renamed to: "Uzhensc".
+  - renamed to: "Educational Agent";
+  - optimized forever running application:
+    - added Singleton which guarantees only one service running at time: SingletonService class;
+    - fixed and changed service starter code.
+  - added vibrating and alarm sound fuction when notification arrives;
+  - added language changing fuction:
+    - added "Change language" item into menu;
+    - added language change manager: LocaleManager class.
+  - optimized school data getting:
+    - added data manager: SchoolDataManager class;
+    - fixed code where getting school datas.
