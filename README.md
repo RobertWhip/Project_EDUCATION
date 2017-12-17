@@ -1,5 +1,5 @@
 # Project_EDUCATION
-## Application for a contest.
+### Application for a contest.
 
 APK file is located in "_APK" directory.
 
@@ -7,12 +7,12 @@ This application is created for those people who interested in notifications by 
 
 In this application, the user can visit 28 sites, get notifications from it (some sites are unavailable or not posting news), call the choosed school, send SMS, write an email.
 
-### Languages in application:
+## Languages in application:
  - English;
  - Ukrainian;
  - Hungarian.
 
-### Used permissions in application:
+## Used permissions in application:
  - internet;
  - access network state;
  - receive boot completed;
@@ -24,7 +24,7 @@ In this application, the user can visit 28 sites, get notifications from it (som
  - can check internet connection availability;
  - has navigation drawer;
  - has FAB (Floating Action Button).
-# Images from v 0.1:
+## Images from v 0.1:
  
  
  
@@ -34,7 +34,7 @@ In this application, the user can visit 28 sites, get notifications from it (som
 ![p2](https://user-images.githubusercontent.com/22663206/32137165-ad542622-bc1a-11e7-81d3-8c5a7d926c8d.PNG)
 ![p4](https://user-images.githubusercontent.com/22663206/32137166-ad7ee09c-bc1a-11e7-8013-44504cdbdbb5.PNG)
 
-Updates:
+## Updates:
 v 0.2:
   - released better optimization for battery;
   - Notification click fixed:
