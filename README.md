@@ -7,12 +7,12 @@ This application is created for those people who interested in notifications by 
 
 In this application, the user can visit 28 sites, get notifications from it (some sites are unavailable or not posting news), call the choosed school, send SMS, write an email.
 
-## Languages in application:
+### Languages in application:
  - English;
  - Ukrainian;
  - Hungarian.
 
-## Used permissions in application:
+### Used permissions in application:
  - internet;
  - access network state;
  - receive boot completed;
