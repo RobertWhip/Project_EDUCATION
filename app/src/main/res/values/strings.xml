@@ -6,9 +6,6 @@
     <string name="action_show_notification">Get notifications</string>
     <string name="action_refresh">Refresh</string>
     <string name="action_language">Change language</string>
-    <string name="action_english">English</string>
-    <string name="action_ukrainian">Ukrainian</string>
-    <string name="action_hungarian">Hungarian</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>

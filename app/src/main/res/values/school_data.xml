@@ -90,4 +90,8 @@
     <string name="email_zippo">none</string>
 
 
+    <string name="action_english">English</string>
+    <string name="action_ukrainian">Українська</string>
+    <string name="action_hungarian">Magyar</string>
+
 </resources>

@@ -5,9 +5,6 @@
     <string name="action_show_notification">Értesítéseket kapni</string>
     <string name="action_refresh">Újraindítás</string>
     <string name="action_language">Nyelvválasztás</string>
-    <string name="action_english">Angol</string>
-    <string name="action_ukrainian">Ukrán</string>
-    <string name="action_hungarian">Magyar</string>
 
     <string name="navigation_drawer_open">Kinyitás</string>
     <string name="navigation_drawer_close">Bezárás</string>

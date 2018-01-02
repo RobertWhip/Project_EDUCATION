@@ -5,10 +5,6 @@
     <string name="action_show_notification">Отримати оповіщення</string>
     <string name="action_refresh">Перезагрузити</string>
     <string name="action_language">Змінити мову</string>
-    <string name="action_english">Англійська</string>
-    <string name="action_ukrainian">Українська</string>
-    <string name="action_hungarian">Угорська</string>
-
 
     <string name="navigation_drawer_open">Відкрити</string>
     <string name="navigation_drawer_close">Закрити</string>
