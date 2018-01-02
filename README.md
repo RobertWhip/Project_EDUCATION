@@ -1,5 +1,5 @@
 # Project_EDUCATION
-## Application for a contest.
+### Application for a contest.
 
 APK file is located in "_APK" directory.
 
@@ -10,7 +10,6 @@ In this application, the user can visit 28 sites, get notifications from it (som
 ### Languages in application:
  - English;
  - Ukrainian;
- - Russian;
  - Hungarian.
 
 ### Used permissions in application:
@@ -25,6 +24,7 @@ In this application, the user can visit 28 sites, get notifications from it (som
  - can check internet connection availability;
  - has navigation drawer;
  - has FAB (Floating Action Button).
+## Images from v 0.1:
  
  
  
@@ -34,12 +34,12 @@ In this application, the user can visit 28 sites, get notifications from it (som
 ![p2](https://user-images.githubusercontent.com/22663206/32137165-ad542622-bc1a-11e7-81d3-8c5a7d926c8d.PNG)
 ![p4](https://user-images.githubusercontent.com/22663206/32137166-ad7ee09c-bc1a-11e7-8013-44504cdbdbb5.PNG)
 
-Updates:
-v 0.2:
+## Updates:
+### v 0.2:
   - released better optimization for battery;
   - Notification click fixed:
     - now "Get notification" check box works right;
-    - site loading bug;
+    - site loading bug.
   - released landscape orientation;
   - changed FAB position;
   - edited splash title image;
@@ -49,4 +49,14 @@ v 0.2:
   - fixed the name of schools;
   - fixed and optimized WebViewClientWithProgressBar class;
   - fixed title changer bug;
-  - renamed to: "Uzhensc".
+  - renamed to: "Educational Agent";
+  - optimized forever running application:
+    - added Singleton which guarantees only one service running at time: SingletonService class;
+    - fixed and changed service starter code.
+  - added vibrating and alarm sound fuction when notification arrives;
+  - added language changing fuction:
+    - added "Change language" item into menu;
+    - added language change manager: LocaleManager class.
+  - optimized school data getting:
+    - added data manager: SchoolDataManager class;
+    - fixed code where getting school datas.
