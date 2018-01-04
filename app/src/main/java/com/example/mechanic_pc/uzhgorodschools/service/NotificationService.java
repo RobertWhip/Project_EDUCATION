@@ -23,6 +23,7 @@ import com.example.mechanic_pc.uzhgorodschools.data.SchoolData;
 import com.example.mechanic_pc.uzhgorodschools.data.db.SchoolDatabaseHelper;
 import com.example.mechanic_pc.uzhgorodschools.utils.Constant;
 import com.example.mechanic_pc.uzhgorodschools.utils.InternetConnection;
+import com.example.mechanic_pc.uzhgorodschools.utils.LocaleManager;
 import com.example.mechanic_pc.uzhgorodschools.utils.SchoolDataManager;
 
 import org.jsoup.Jsoup;
@@ -48,10 +49,13 @@ public class NotificationService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
+
         if (context == null)
             context = getApplicationContext();
         if (net == null)
             net = new InternetConnection(context);
+
+
 
         handler = new Handler();
 
@@ -70,17 +74,22 @@ public class NotificationService extends Service {
                                     new String[]{"1"},
                                     null, null, null);
 
+                            String url = "error";
                             if (cursor.moveToFirst()) {
                                 currentId = cursor.getString(1);
                                 currentSchoolName = SchoolDataManager.getSchoolTitle(context,
                                         Integer.parseInt(currentId));
-                                new ParsingTask().execute(cursor.getString(0));
+                                url = cursor.getString(0);
+                                new ParsingTask().execute(url);
                             }
                             while (cursor.moveToNext()) {
-                                currentId = cursor.getString(2);
-                                currentSchoolName = cursor.getString(1);
-                                new ParsingTask().execute(cursor.getString(0));
+                                currentId = cursor.getString(1);
+                                currentSchoolName = SchoolDataManager.getSchoolTitle(context,
+                                        Integer.parseInt(currentId));
+                                url = cursor.getString(0);
+                                new ParsingTask().execute(url);
                             }
+
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -95,6 +104,12 @@ public class NotificationService extends Service {
 
         return START_STICKY;
     }
+
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(LocaleManager.setLocale(base));
+    }
+
 
     @Nullable
     @Override
@@ -163,9 +178,9 @@ public class NotificationService extends Service {
 
             if (oldSchoolData != null) {
                 if (!oldSchoolData.getNotificationTitle().equals(parsedTitle)) {
-
                     if (!isFirstNotification(id) && !parsedTitle.equals(""))
                         notification(schoolName, parsedTitle, parsedUrl, url, id);
+
                     writeNewNotificationData(parsedTitle, id);
                 }
             }
@@ -220,7 +235,7 @@ public class NotificationService extends Service {
                     null, null, null);
 
             if (cursor.moveToFirst()) {
-                sd.setName(SchoolDataManager.getSchoolTitle(this, Integer.parseInt(id)));
+                sd.setName(currentSchoolName);
                 sd.setNotificationTitle(cursor.getString(0));
             }
 
@@ -291,11 +306,7 @@ public class NotificationService extends Service {
             try {
 
                 doc = Jsoup.connect(url).timeout(Constant.SECONDS_TO_TIMEOUT).get();
-
-                if(!url.equals(getResources().getString(R.string.site_school_kiblarivska)))
-                    titleElements = doc.getElementsByAttributeValue("class", "eTitle");
-                else
-                    titleElements = doc.getElementsByAttributeValue("class", "news-item");
+                titleElements = doc.getElementsByAttributeValue("class", "eTitle");
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -308,22 +319,13 @@ public class NotificationService extends Service {
                         parsedUrl = titleElements.get(0).child(0).attr("href");
                         parsedTitle = titleElements.get(0).text();
 
-                    }else if (url.equals(getResources().getString(R.string.site_mon_gov))) {
-                        titleElements = doc.getElementsByAttributeValue("id", "tab1");
-                        parsedUrl = titleElements.get(0).child(0).child(0).child(2).attr("href");
-                        parsedTitle = titleElements.get(0).child(0).child(0).child(2).child(0).text();
-
-                    } else if (url.equals(getResources().getString(R.string.site_metodkab))) {
-                        parsedUrl = titleElements.get(0).child(0).attr("href");
-                        parsedTitle = titleElements.get(0).child(0).text();
-
                     } else if (url.equals(getResources().getString(R.string.site_school_kontsivska))) {
                         parsedUrl = titleElements.get(1).child(0).attr("href");
                         parsedTitle = titleElements.get(1).text();
 
                     }
                         /* else if(url.equals(getResources().getString(R.string.site_school_onokivska))){
-                             //THERE IS NOTHING TO NOTIFY
+                             //INVALID
 
                         } */
                     else if (url.equals(getResources().getString(R.string.site_school_surtivska))) {
@@ -366,12 +368,11 @@ public class NotificationService extends Service {
                         titleElements = doc.getElementsByAttributeValue("class", "ja-bullettin clearfix");
 
                         try {
-                            parsedUrl = titleElements.get(0).child(0).child(0).child(0).attr("href");
-                            parsedTitle = titleElements.get(0).child(0).child(0).child(0).text();
-
-                        } catch (Exception e) {
                             parsedUrl = titleElements.get(0).child(0).child(1).child(0).attr("href");
                             parsedTitle = titleElements.get(0).child(0).child(1).child(0).text();
+                        } catch (Exception e) {
+                            parsedUrl = titleElements.get(0).child(0).child(0).child(0).attr("href");
+                            parsedTitle = titleElements.get(0).child(0).child(0).child(0).text();
                         }
 
                     } else if (url.equals(getResources().getString(R.string.site_school_rativetska))) {
@@ -383,7 +384,7 @@ public class NotificationService extends Service {
 
                     }
                          /* else if(url.equals(getResources().getString(R.string.site_school_tisaashvanska))){
-                              //No site
+                              //INVALID
 
                         } */
                     else if (url.equals(getResources().getString(R.string.site_school_serednanska))) {
@@ -392,23 +393,20 @@ public class NotificationService extends Service {
                         parsedTitle = titleElements.get(0).text();
 
                     } else if (url.equals(getResources().getString(R.string.site_school_koritnanska))) {
-
                         parsedUrl = titleElements.get(0).child(0).attr("href");
                         parsedTitle = titleElements.get(0).text();
 
                     } else if (url.equals(getResources().getString(R.string.site_school_chernivskoi))) {
-
                         parsedUrl = titleElements.get(0).child(0).attr("href");
                         parsedTitle = titleElements.get(0).text();
 
                     } else if (url.equals(getResources().getString(R.string.site_school_maloheevetska))) {
-
                         parsedUrl = titleElements.get(0).child(0).attr("href");
                         parsedTitle = titleElements.get(0).text();
 
                     }
                         /* else if(url.equals(getResources().getString(R.string.site_school_palad_komarivetska))){
-                           //There is nothing to notify
+                           //INVALID
 
                         } */
                     else if (url.equals(getResources().getString(R.string.site_school_hudlivska))) {
@@ -416,13 +414,13 @@ public class NotificationService extends Service {
                         parsedTitle = titleElements.get(0).text();
 
                     } else if (url.equals(getResources().getString(R.string.site_school_kiblarivska))) {
-                        titleElements = doc.getElementsByAttributeValue("class", "eTitle");
-                        parsedTitle = titleElements.get(0).child(1).text();
-                        parsedUrl = titleElements.get(0).child(2).attr("href");
+                        titleElements = doc.getElementsByAttributeValue("class", "news-item");
+                        parsedTitle = titleElements.get(0).child(1).child(0).text();
+                        parsedUrl = titleElements.get(0).child(1).child(0).attr("href");
 
                     }
                         /* else if(url.equals(getResources().getString(R.string.site_school_solovkivska))){
-                              //No website
+                              //INVALID
 
                         } */
                     else if (url.equals(getResources().getString(R.string.site_school_kholmkivksa))) {
@@ -441,10 +439,19 @@ public class NotificationService extends Service {
                         if (parsedUrl.startsWith(url)) {
                             parsedUrl = parsedUrl.substring(url.length(), parsedUrl.length());
                         }
-                    }else
+                    } else if (url.contains("mon.gov.ua")) {
+                        titleElements = doc.getElementsByAttributeValue("class", "news-block");
+                        parsedUrl = titleElements.get(0).child(1).child(0).attr("href");
+                        parsedTitle = titleElements.get(0).child(1).child(0).child(0).text();
+
+                    } else if (url.equals(getResources().getString(R.string.site_metodkab))) {
+                        parsedUrl = titleElements.get(0).child(0).attr("href");
+                        parsedTitle = titleElements.get(0).child(0).text();
+
+                    } else
                         parsedTitle = "";
 
-                    if(!parsedUrl.startsWith("/"))
+                    if(!parsedUrl.startsWith("/") && !parsedUrl.startsWith("http"))
                         parsedUrl = "/" + parsedUrl;
 
                 } catch (Exception e) {

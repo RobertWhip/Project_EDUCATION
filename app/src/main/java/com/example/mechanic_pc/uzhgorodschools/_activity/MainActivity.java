@@ -45,6 +45,7 @@ import com.example.mechanic_pc.uzhgorodschools.utils.InternetConnection;
 import com.example.mechanic_pc.uzhgorodschools.utils.LocaleManager;
 import com.example.mechanic_pc.uzhgorodschools.utils.SchoolDataManager;
 
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -63,6 +64,7 @@ public class MainActivity extends AppCompatActivity
     /* QA code
         private static HashMap<String, String> schoolsUrls = new HashMap<>();
     */
+
     private static final String CURRENT_URL = "currentUrl";
     private static final String CURRENT_ID = "currentId";
     private static final String TRANSITION = "transition";
@@ -214,9 +216,14 @@ public class MainActivity extends AppCompatActivity
                 currentId = Integer.parseInt(getIntent().getExtras().get(Constant.ID).toString());
 
                 setSchoolData(currentId);
+                if (newUrl.startsWith("/"))
+                    currentUrl = currentUrl + newUrl;
+                else
+                    currentUrl = newUrl;
 
-                site.loadUrl(currentUrl + newUrl);
+                site.loadUrl(currentUrl);
                 site.setWebViewClient(webClient);
+
 
                 //setCheckedIfCheckedShowingNotification();
             }
@@ -638,12 +645,13 @@ public class MainActivity extends AppCompatActivity
             site.loadUrl(currentUrl);
             site.setWebViewClient(webClient);
         }
+
         /* QA code
         if (new InternetConnection(this).connectionAvailable()) {
             ParsingTask task = new ParsingTask();
             task.execute(currentUrl);
-        }
-        */
+        }*/
+
     }
     private String getUrlById (int id) {
         return SchoolDataManager.getSchoolSiteUrl(this, id);
@@ -659,10 +667,6 @@ public class MainActivity extends AppCompatActivity
             }
             if(!menu.findItem(R.id.action_refresh).isVisible())
                 menu.findItem(R.id.action_refresh).setVisible(true);
-    }
-
-    private String getOneWord(String word) {
-        return word;//(word.split(" "))[0];
     }
 
     private boolean setContactData(int id) {
@@ -747,192 +751,194 @@ public class MainActivity extends AppCompatActivity
         }
     }
     /* QA code
-        private class ParsingTask extends AsyncTask<String, Void, Void> {
-            String url = "";
-            String parsedTitle = "";
-            String parsedDate = "";
-            String parsedUrl = "";
-            Document doc = null;
-            @Override
-            protected Void doInBackground(String... args){
-                url = args[0];
-                Elements titleElements = null, dateElements = null;
-                try {
+    private void show(String s) {
+        Toast.makeText(this, s, Toast.LENGTH_LONG).show();
+    }
 
-                    doc = Jsoup.connect(url).timeout(Constant.SECONDS_TO_TIMEOUT).get();
+    private class ParsingTask extends AsyncTask<String, Void, Void> {
 
-                    if(!url.equals(getResources().getString(R.string.site_school_kiblarivska)))
-                        titleElements = doc.getElementsByAttributeValue("class", "eTitle");
-                    else
-                        titleElements = doc.getElementsByAttributeValue("class", "news-item");
-                        dateElements = doc.getElementsByAttributeValue("class", "eDetails");
-                    } catch(Exception e) {
-                    e.printStackTrace();
-                    }
+        String url = "";
+        String parsedTitle = "";
+        String parsedUrl = "";
+        Document doc = null;
 
-                try {
-                    if (doc != null) {
-                        if (url.equals(getResources().getString(R.string.site_school_shishlivtsi))) {
-                            parsedUrl = titleElements.get(0).child(0).attr("href");
-                            parsedTitle = titleElements.get(0).text();
-                            parsedDate = dateElements.get(0).child(5).child(1).text();
-
-                        } else if (url.equals(getResources().getString(R.string.site_mon_gov))) {
-                            titleElements = doc.getElementsByAttributeValue("id", "tab1");
-                            parsedUrl = titleElements.get(0).child(0).child(0).child(2).attr("href");
-                            parsedTitle = titleElements.get(0).child(0).child(0).child(2).child(0).text();
-
-                        } else if (url.equals(getResources().getString(R.string.site_metodkab))) {
-                            parsedUrl = titleElements.get(0).child(0).attr("href");
-                            parsedTitle = titleElements.get(0).child(0).text();
-
-                        } else if (url.equals(getResources().getString(R.string.site_school_kontsivska))) {
-                            parsedUrl = titleElements.get(1).child(0).attr("href");
-                            parsedTitle = titleElements.get(1).text();
-
-                            try {
-                                parsedDate = dateElements.get(1).child(7).child(1).text();
-                            } catch (Exception e) {
-                                parsedDate = dateElements.get(1).child(5).child(1).text();
-                            }
-
-                        } else if (url.equals(getResources().getString(R.string.site_school_surtivska))) {
-                            parsedUrl = titleElements.get(0).child(0).attr("href");
-                            parsedTitle = titleElements.get(0).text();
-                            parsedDate = dateElements.get(0).child(5).child(1).text();
-
-                        } else if (url.equals(getResources().getString(R.string.site_school_esenska))) {
-                            parsedUrl = titleElements.get(0).child(0).attr("href");
-                            parsedTitle = titleElements.get(0).text();
-                            parsedDate = dateElements.get(0).child(5).child(1).text();
-
-                            if (parsedDate.equals("sulieszeny")) {
-                            parsedDate = dateElements.get(0).child(7).child(1).text();
-                            }
-
-                        } else if (url.equals(getResources().getString(R.string.site_school_malodobronska))) {
-                            parsedUrl = titleElements.get(0).child(0).attr("href");
-                            parsedTitle = titleElements.get(0).text();
-                            parsedDate = dateElements.get(0).child(1).text();
-
-                        } else if (url.equals(getResources().getString(R.string.site_school_velikolazivska))) {
-                            parsedUrl = titleElements.get(0).child(0).attr("href");
-                            parsedTitle = titleElements.get(0).text();
-                            parsedDate = dateElements.get(0).child(5).child(1).text();
-
-                        } else if (url.equals(getResources().getString(R.string.site_school_storozhnitska))) {
-                            parsedUrl = titleElements.get(0).child(0).attr("href");
-                            parsedTitle = titleElements.get(0).text();
-                            parsedDate = dateElements.get(0).child(5).child(1).text();
-
-                        } else if (url.equals(getResources().getString(R.string.site_licey_velikodobronska))) {
-                            parsedUrl = titleElements.get(0).child(0).attr("href");
-                            parsedTitle = titleElements.get(0).text();
-                            parsedDate = dateElements.get(0).child(1).text();
-
-                        } else if (url.equals(getResources().getString(R.string.site_school_kamyanitska))) {
-                            parsedUrl = titleElements.get(0).child(0).attr("href");
-                            parsedTitle = titleElements.get(0).text();
-                            parsedDate = dateElements.get(0).child(2).text();
-
-                        } else if (url.equals(getResources().getString(R.string.site_school_ruskokomarivska))) {
-                            parsedUrl = titleElements.get(0).child(0).attr("href");
-                            parsedTitle = titleElements.get(0).text();
-                            parsedDate = dateElements.get(0).child(5).child(1).text();
-
-                        } else if (url.equals(getResources().getString(R.string.site_school_velikoheevetska))) {
-                            parsedUrl = titleElements.get(0).child(0).attr("href");
-                            parsedTitle = titleElements.get(0).text();
-                            parsedDate = dateElements.get(0).child(5).child(1).text();
-
-                        } else if (url.equals(getResources().getString(R.string.site_school_velikodobronska))) {
-                            titleElements = doc.getElementsByAttributeValue("class", "ja-bullettin clearfix");
-                            try {
-                                parsedUrl = titleElements.get(0).child(0).child(0).child(0).attr("href");
-                                parsedTitle = titleElements.get(0).child(0).child(0).child(0).text();
-                                parsedDate = titleElements.get(0).child(0).child(0).child(1).text();
-                            } catch (Exception e) {
-                                parsedUrl = titleElements.get(0).child(0).child(1).child(0).attr("href");
-                                parsedTitle = titleElements.get(0).child(0).child(1).child(0).text();
-                                parsedDate = titleElements.get(0).child(0).child(1).child(1).text();
-                            }
-                        } else if (url.equals(getResources().getString(R.string.site_school_rativetska))) {
-                            titleElements = doc.getElementsByAttributeValue("class", "eMessage");
-                            parsedTitle = titleElements.get(0).child(0).text();
-
-                            titleElements = doc.getElementsByAttributeValue("class", "entryReadAllLink");
-                            parsedUrl = titleElements.get(0).attr("href");
-                            parsedDate = dateElements.get(0).child(5).child(1).text();
-
-                        } else if (url.equals(getResources().getString(R.string.site_school_serednanska))) {
-                            parsedUrl = titleElements.get(0).child(0).attr("href");
-                            parsedTitle = titleElements.get(0).text();
-                            parsedDate = dateElements.get(0).child(5).child(1).text();
-
-                        } else if (url.equals(getResources().getString(R.string.site_school_koritnanska))) {
-                            parsedUrl = titleElements.get(0).child(0).attr("href");
-                            parsedTitle = titleElements.get(0).text();
-                            parsedDate = dateElements.get(0).child(4).child(1).text();
-
-                        } else if (url.equals(getResources().getString(R.string.site_school_chernivskoi))) {
-                            parsedUrl = titleElements.get(0).child(0).attr("href");
-                            parsedTitle = titleElements.get(0).text();
-                            parsedDate = dateElements.get(0).child(5).child(1).text();
-
-                        } else if (url.equals(getResources().getString(R.string.site_school_maloheevetska))) {
-                            parsedUrl = titleElements.get(0).child(0).attr("href");
-                            parsedTitle = titleElements.get(0).text();
-                            parsedDate = dateElements.get(0).child(5).child(1).text();
-
-                        } else if (url.equals(getResources().getString(R.string.site_school_hudlivska))) {
-                            parsedUrl = titleElements.get(0).child(0).attr("href");
-                            parsedTitle = titleElements.get(0).text();
-                            parsedDate = dateElements.get(0).child(5).child(1).text();
-
-                        } else if (url.equals(getResources().getString(R.string.site_school_kiblarivska))) {
-                            parsedTitle = titleElements.get(0).child(1).text();
-                            parsedDate = titleElements.get(0).child(0).text();
-                            parsedUrl = titleElements.get(0).child(2).attr("href");
-
-                        } else if (url.equals(getResources().getString(R.string.site_school_kholmkivksa))) {
-                            parsedTitle = titleElements.get(0).child(0).text();
-                            parsedDate = dateElements.get(0).child(5).child(1).text();
-                            parsedUrl = titleElements.get(0).child(0).attr("href");
-
-                        } else if (url.equals(getResources().getString(R.string.site_school_solomonivska))) {
-                            parsedTitle = titleElements.get(0).child(0).text();
-                            parsedDate = dateElements.get(0).child(5).child(1).text();
-                            parsedUrl = titleElements.get(0).child(0).attr("href");
-                        } else if (url.equals(getResources().getString(R.string.site_zippo))) {
-                            titleElements = doc.getElementsByAttributeValue("class", "title");
-                            parsedTitle = titleElements.get(0).text();
-                            titleElements = doc.getElementsByAttributeValue("class", "item");
-                            parsedUrl = titleElements.get(0).attr("data-permalink");
-                            if (parsedUrl.startsWith(url)) {
-                                parsedUrl = parsedUrl.substring(url.length(), parsedUrl.length());
-                            }
-                        }
-
-                    } else
-                        parsedTitle = "";
-                } catch (Exception e) {
-                    Toast.makeText(MainActivity.this,
-                            getResources().getString(R.string.error_at_parsing), Toast.LENGTH_SHORT).show();
-                }
-
-                return null;
-            }
-
-
-            @Override
-            protected void onPostExecute(Void v) {
-                show(parsedUrl);
-
-                super.onPostExecute(v);
-            }
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
         }
 
-        private void show(String s) {
-            Toast.makeText(this, s, Toast.LENGTH_LONG).show();
-        }*/
+        @Override
+        protected void onPostExecute(Void v) {
+            show(parsedTitle + "///" +parsedUrl);
+        }
+
+        @Override
+        protected Void doInBackground(String... args){
+            url = args[0];
+
+            Elements titleElements = null;
+            try {
+
+                doc = Jsoup.connect(url).timeout(Constant.SECONDS_TO_TIMEOUT).get();
+                titleElements = doc.getElementsByAttributeValue("class", "eTitle");
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            if (doc != null) {
+                try {
+
+                    if (url.equals(getResources().getString(R.string.site_school_shishlivtsi))) {
+                        parsedUrl = titleElements.get(0).child(0).attr("href");
+                        parsedTitle = titleElements.get(0).text();
+
+                    } else if (url.equals(getResources().getString(R.string.site_mon_gov))) {
+                        titleElements = doc.getElementsByAttributeValue("class", "news-block");
+                        parsedUrl = titleElements.get(0).child(1).child(0).attr("href");
+                        parsedTitle = titleElements.get(0).child(1).child(0).child(0).text();
+
+                    } else if (url.equals(getResources().getString(R.string.site_metodkab))) {
+                        parsedUrl = titleElements.get(0).child(0).attr("href");
+                        parsedTitle = titleElements.get(0).child(0).text();
+
+                    } else if (url.equals(getResources().getString(R.string.site_school_kontsivska))) {
+                        parsedUrl = titleElements.get(1).child(0).attr("href");
+                        parsedTitle = titleElements.get(1).text();
+
+                    }
+                        /* else if(url.equals(getResources().getString(R.string.site_school_onokivska))){
+                             //INVALID
+
+                        } *//*
+                    else if (url.equals(getResources().getString(R.string.site_school_surtivska))) {
+                        parsedUrl = titleElements.get(0).child(0).attr("href");
+                        parsedTitle = titleElements.get(0).text();
+
+                    } else if (url.equals(getResources().getString(R.string.site_school_esenska))) {
+                        parsedUrl = titleElements.get(0).child(0).attr("href");
+                        parsedTitle = titleElements.get(0).text();
+
+                    } else if (url.equals(getResources().getString(R.string.site_school_malodobronska))) {
+                        parsedUrl = titleElements.get(0).child(0).attr("href");
+                        parsedTitle = titleElements.get(0).text();
+
+                    } else if (url.equals(getResources().getString(R.string.site_school_velikolazivska))) {
+                        parsedUrl = titleElements.get(0).child(0).attr("href");
+                        parsedTitle = titleElements.get(0).text();
+
+                    } else if (url.equals(getResources().getString(R.string.site_school_storozhnitska))) {
+                        parsedUrl = titleElements.get(0).child(0).attr("href");
+                        parsedTitle = titleElements.get(0).text();
+
+                    } else if (url.equals(getResources().getString(R.string.site_licey_velikodobronska))) {
+                        parsedUrl = titleElements.get(0).child(0).attr("href");
+                        parsedTitle = titleElements.get(0).text();
+
+                    } else if (url.equals(getResources().getString(R.string.site_school_kamyanitska))) {
+                        parsedUrl = titleElements.get(0).child(0).attr("href");
+                        parsedTitle = titleElements.get(0).text();
+
+                    } else if (url.equals(getResources().getString(R.string.site_school_ruskokomarivska))) {
+                        parsedUrl = titleElements.get(0).child(0).attr("href");
+                        parsedTitle = titleElements.get(0).text();
+
+                    } else if (url.equals(getResources().getString(R.string.site_school_velikoheevetska))) {
+                        parsedUrl = titleElements.get(0).child(0).attr("href");
+                        parsedTitle = titleElements.get(0).text();
+
+                    } else if (url.equals(getResources().getString(R.string.site_school_velikodobronska))) {
+                        titleElements = doc.getElementsByAttributeValue("class", "ja-bullettin clearfix");
+
+                        try {
+                            parsedUrl = titleElements.get(0).child(0).child(1).child(0).attr("href");
+                            parsedTitle = titleElements.get(0).child(0).child(1).child(0).text();
+                        } catch (Exception e) {
+                            parsedUrl = titleElements.get(0).child(0).child(0).child(0).attr("href");
+                            parsedTitle = titleElements.get(0).child(0).child(0).child(0).text();
+                        }
+
+                    } else if (url.equals(getResources().getString(R.string.site_school_rativetska))) {
+                        titleElements = doc.getElementsByAttributeValue("class", "eMessage");
+                        parsedTitle = titleElements.get(0).child(0).text();
+
+                        titleElements = doc.getElementsByAttributeValue("class", "entryReadAllLink");
+                        parsedUrl = titleElements.get(0).attr("href");
+
+                    }
+                         /* else if(url.equals(getResources().getString(R.string.site_school_tisaashvanska))){
+                              //INVALID
+
+                        } *//*
+                    else if (url.equals(getResources().getString(R.string.site_school_serednanska))) {
+
+                        parsedUrl = titleElements.get(0).child(0).attr("href");
+                        parsedTitle = titleElements.get(0).text();
+
+                    } else if (url.equals(getResources().getString(R.string.site_school_koritnanska))) {
+
+                        parsedUrl = titleElements.get(0).child(0).attr("href");
+                        parsedTitle = titleElements.get(0).text();
+
+                    } else if (url.equals(getResources().getString(R.string.site_school_chernivskoi))) {
+
+                        parsedUrl = titleElements.get(0).child(0).attr("href");
+                        parsedTitle = titleElements.get(0).text();
+
+                    } else if (url.equals(getResources().getString(R.string.site_school_maloheevetska))) {
+
+                        parsedUrl = titleElements.get(0).child(0).attr("href");
+                        parsedTitle = titleElements.get(0).text();
+
+                    }
+                        /* else if(url.equals(getResources().getString(R.string.site_school_palad_komarivetska))){
+                           //INVALID
+
+                        } *//*
+                    else if (url.equals(getResources().getString(R.string.site_school_hudlivska))) {
+                        parsedUrl = titleElements.get(0).child(0).attr("href");
+                        parsedTitle = titleElements.get(0).text();
+
+                    } else if (url.equals(getResources().getString(R.string.site_school_kiblarivska))) {
+                        titleElements = doc.getElementsByAttributeValue("class", "news-item");
+                        parsedTitle = titleElements.get(0).child(1).child(0).text();
+                        parsedUrl = titleElements.get(0).child(1).child(0).attr("href");
+
+                    }
+                        /* else if(url.equals(getResources().getString(R.string.site_school_solovkivska))){
+                              //INVALID
+
+                        } *//*
+                    else if (url.equals(getResources().getString(R.string.site_school_kholmkivksa))) {
+                        parsedTitle = titleElements.get(0).child(0).text();
+                        parsedUrl = titleElements.get(0).child(0).attr("href");
+
+                    } else if (url.equals(getResources().getString(R.string.site_school_solomonivska))) {
+                        parsedTitle = titleElements.get(0).child(0).text();
+                        parsedUrl = titleElements.get(0).child(0).attr("href");
+
+                    } else if (url.equals(getResources().getString(R.string.site_zippo))) {
+                        titleElements = doc.getElementsByAttributeValue("class", "title");
+                        parsedTitle = titleElements.get(0).text();
+                        titleElements = doc.getElementsByAttributeValue("class", "item");
+                        parsedUrl = titleElements.get(0).attr("data-permalink");
+                        if (parsedUrl.startsWith(url)) {
+                            parsedUrl = parsedUrl.substring(url.length(), parsedUrl.length());
+                        }
+                    }else
+                        parsedTitle = "";
+
+                    if(!parsedUrl.startsWith("/"))
+                        parsedUrl = "/" + parsedUrl;
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    parsedTitle = "";
+                    parsedUrl = "";
+                }
+            }
+
+            return null;
+        }
+    }*/
 }
